@@ -2,6 +2,7 @@ package com.iotracks.comsat.restapi;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.concurrent.Callable;
 
 import javax.json.Json;
@@ -128,7 +129,7 @@ public class RestAPIChannelHandler extends ChannelInboundHandlerAdapter {
 		} else if (uri.equals(Constants.API_COMMAND_LINE)) {
 			callable = new CommandLineHandler(request, ctx.alloc().buffer(), content);
 		} else if (uri.equals(Constants.API_DIRECT_REQUEST)) {
-			callable = new DirectConnectionRequestHandler(request, ctx.alloc().buffer(), content);
+			callable = new DirectConnectionRequestHandler(request, ctx.alloc().buffer(), content, (InetSocketAddress)ctx.channel().remoteAddress());
 		} else if (uri.equals(Constants.API_DIRECT_ADD)) {
 			callable = new DirectConnectionAddHandler(request, ctx.alloc().buffer(), content);
 		} else if (uri.equals(Constants.API_DIRECT_REMOVE)) {

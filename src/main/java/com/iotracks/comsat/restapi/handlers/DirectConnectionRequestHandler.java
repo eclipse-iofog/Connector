@@ -1,5 +1,7 @@
 package com.iotracks.comsat.restapi.handlers;
 
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Callable;
 
@@ -26,11 +28,13 @@ public class DirectConnectionRequestHandler implements Callable<Object> {
 	private final HttpRequest request;
 	private ByteBuf outputBuffer;
 	private final byte[] content;
+	private final InetSocketAddress socketAddress;
 	
-	public DirectConnectionRequestHandler(HttpRequest request, ByteBuf outputBuffer, byte[] content) {
+	public DirectConnectionRequestHandler(HttpRequest request, ByteBuf outputBuffer, byte[] content, InetSocketAddress socketAddress) {
 		this.request = request;
 		this.outputBuffer = outputBuffer;
 		this.content = content;
+		this.socketAddress = socketAddress;
 	}
 	
 	public Object call() throws Exception {
@@ -67,7 +71,8 @@ public class DirectConnectionRequestHandler implements Callable<Object> {
 			if (directConnection == null) {
 				int portNumber = Integer.parseInt(portString);
 				LogUtil.info(">>>>>> ADD DIRECT REQUEST : " + directId);
-				directConnection = new DirectConnection(ipAddress, portNumber, certificate);
+				String remoteIpAddress = socketAddress.getAddress().getHostAddress();
+				directConnection = new DirectConnection(remoteIpAddress, ipAddress, portNumber, certificate);
 				ConfigManager.putDirectRequest(directId, directConnection);
 				responseJson = Json.createObjectBuilder()
 						.add("status", "wait")
@@ -80,6 +85,7 @@ public class DirectConnectionRequestHandler implements Callable<Object> {
 						.add("status", "ok")
 						.add("id", directId)
 						.add("ip", directConnection.getIpAddress())
+						.add("remoteip", directConnection.getRemoteIpAddress())
 						.add("port", directConnection.getPort())
 						.add("certificate", directConnection.getCertificate())
 						.add("timestamp", System.currentTimeMillis())

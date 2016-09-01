@@ -11,9 +11,11 @@ import javax.json.JsonObject;
 
 public class Settings {
 	private static Map<Integer, Boolean> validPorts = new HashMap<>();
+	private static int brokerPort;
 	
 	public static void loadSettings() throws Exception {
 		JsonObject settings = Json.createReader(new FileInputStream(Constants.SETTINGS_FILENAME)).readObject();
+		brokerPort = settings.getInt("broker");
 		JsonArray ports = settings.getJsonArray("ports");
 		for (int i = 0; i < ports.size(); i++) {
 			String[] port = ports.getString(i).split("-");
@@ -75,5 +77,8 @@ public class Settings {
 			validPorts.put(port, false);
 		}
 	}
-	
+
+	public static int getBrokerPort() {
+		return brokerPort;
+	}
 }

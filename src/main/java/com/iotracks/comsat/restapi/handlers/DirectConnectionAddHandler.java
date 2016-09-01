@@ -10,6 +10,7 @@ import javax.json.JsonObject;
 import com.iotracks.comsat.config.ConfigManager;
 import com.iotracks.comsat.config.Configuration;
 import com.iotracks.comsat.utils.LogUtil;
+import com.iotracks.comsat.utils.Settings;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
@@ -68,6 +69,7 @@ public class DirectConnectionAddHandler implements Callable<Object> {
 					.add("status", "ok")
 					.add("id", directId)
 					.add("passkey", passkey)
+					.add("port", Settings.getBrokerPort())
 					.add("timestamp", System.currentTimeMillis())
 					.build();
 		} catch (IOException e) {
