@@ -33,8 +33,6 @@ public class PublicSocket implements Runnable {
 			return;
 		}
 		while (!stopListening) {
-//			EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-//			EventLoopGroup workerGroup = new NioEventLoopGroup(1);
 			try {
 				ServerBootstrap b = new ServerBootstrap();
 				b.group(Constants.bossGroup, Constants.workerGroup).channel(NioServerSocketChannel.class);
@@ -46,10 +44,6 @@ public class PublicSocket implements Runnable {
 			} catch (Exception e) {
 				LogUtil.warning(e.getMessage());
 			}
-//			finally {
-//				bossGroup.shutdownGracefully();
-//				workerGroup.shutdownGracefully();
-//			}
 
 			if (!stopListening) {
 				try {
@@ -74,10 +68,7 @@ public class PublicSocket implements Runnable {
 	}
 	
 	public String getStatus() {
-		if (channel.isActive())
-			return "Active";
-		else
-			return "Inactive";
+		return channel.isActive() ? "Active" : "Inactive";
 	}
 	
 }

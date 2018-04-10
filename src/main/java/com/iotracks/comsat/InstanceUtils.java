@@ -16,7 +16,7 @@ public class InstanceUtils {
 	
 	public JsonObject sendHttpRequest(String url, Map<String, String> params) throws Exception {
 		Form formData = new Form();
-		params.entrySet().forEach(e -> formData.param(e.getKey(), e.getValue()));
+		params.forEach(formData::param);
 		
 //		Client client = ClientBuilder.newBuilder().sslContext(SslManager.getSSLContext()).build();
 		Client client = ClientBuilder.newClient();

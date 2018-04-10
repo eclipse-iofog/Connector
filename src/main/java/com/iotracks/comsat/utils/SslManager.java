@@ -15,12 +15,10 @@ import io.netty.handler.ssl.SslContextBuilder;
 
 public class SslManager {
 	public static SslContext getSslContext() throws Exception {
-		SslContext sslCtx = SslContextBuilder.forServer(
+		return SslContextBuilder.forServer(
 				new File(Constants.CERTITICATE_FILENAME),
 				new File(Constants.KEY_FILENAME))
 				.build();
-		
-		return sslCtx;
 	}
 	
 	public static SSLContext getSSLContext() throws Exception {        

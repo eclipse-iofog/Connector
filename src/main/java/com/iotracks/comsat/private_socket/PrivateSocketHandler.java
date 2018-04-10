@@ -23,15 +23,18 @@ public class PrivateSocketHandler extends SimpleChannelInboundHandler<byte[]> {
 		socketServer.connections.remove(ctx.channel());
     }
 
+    @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
     	if (socketServer.connections.size() >= socketServer.maxConnections) {
     		ctx.channel().close().sync();
-    		return;
-    	}
-    	socketServer.connections.add(ctx.channel());
+    	} else {
+			socketServer.connections.add(ctx.channel());
+		}
 	}
 
+	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, byte[] msg) throws Exception {
+
 		if (init) {
 			init = false;
 			String passCode = new String(msg);
