@@ -10,7 +10,6 @@ import javax.json.JsonObject;
 import com.iotracks.comsat.command_line.CommandLineParser;
 import com.iotracks.comsat.config.ConfigManager;
 import com.iotracks.comsat.config.Configuration;
-import com.iotracks.comsat.hole_punch.HolePunchingManager;
 import com.iotracks.comsat.restapi.RestAPI;
 import com.iotracks.comsat.utils.Constants;
 import com.iotracks.comsat.utils.Settings;
@@ -41,8 +40,6 @@ public class ComSat {
         
         Thread.sleep(1000);
 
-        new Thread(new HolePunchingManager()).start();
-        
         socketsManager = new SocketsManager();
         openPorts();
         

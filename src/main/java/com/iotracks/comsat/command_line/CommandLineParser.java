@@ -65,17 +65,15 @@ public class CommandLineParser {
 	}
 
 	private JsonObject isAnotherInstanceRunning(String command, String param) {
-//        InstanceUtils instanceUtils = new InstanceUtils();
-//        Map<String, String> params = new HashMap<>();
-//        params.put("command", command);
-//        params.put("params", param);
-//        try {
-//        	JsonObject result = instanceUtils.sendHttpRequest("https://comsat4.iotracks.com" + Constants.API_COMMAND_LINE, params);
-//        	return result;
-//        } catch (Exception e) {
-//        	return null;
-//        }
-		return null;
+        InstanceUtils instanceUtils = new InstanceUtils();
+        Map<String, String> params = new HashMap<>();
+        params.put("command", command);
+        params.put("params", param);
+        try {
+        	return instanceUtils.sendHttpRequest("https://localhost" + Constants.API_COMMAND_LINE, params);
+        } catch (Exception e) {
+        	return null;
+        }
 	}
-	
+
 }

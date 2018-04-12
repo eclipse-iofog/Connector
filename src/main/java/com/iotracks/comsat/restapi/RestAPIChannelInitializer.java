@@ -21,6 +21,7 @@ public class RestAPIChannelInitializer extends ChannelInitializer<SocketChannel>
 		this.sslCtx = sslCtx;
     }
 
+    @Override
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline p = ch.pipeline();
         if (sslCtx != null)

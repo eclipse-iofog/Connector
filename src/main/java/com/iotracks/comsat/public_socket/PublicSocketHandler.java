@@ -29,7 +29,7 @@ public class PublicSocketHandler extends SimpleChannelInboundHandler<byte[]> {
 
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-		privateChannel = privateSocket.mapChannel(ctx.channel()).orElse(null);
+			privateChannel = privateSocket.mapChannel(ctx.channel()).orElse(null);
 	}
 
 	@Override
