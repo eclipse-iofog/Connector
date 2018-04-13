@@ -7,6 +7,8 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
+import java.util.Optional;
+
 public class PublicSocketHandler extends SimpleChannelInboundHandler<byte[]> {
 
 	private final PrivateSocket privateSocket;
@@ -25,18 +27,19 @@ public class PublicSocketHandler extends SimpleChannelInboundHandler<byte[]> {
 		}
     }
 
-    public void channelActive(ChannelHandlerContext ctx) {
-		privateChannel = privateSocket.mapChannel(ctx.channel());
+	@Override
+	public void channelActive(ChannelHandlerContext ctx) throws Exception {
+			privateChannel = privateSocket.mapChannel(ctx.channel()).orElse(null);
 	}
 
-	protected void channelRead0(ChannelHandlerContext ctx, byte[] msg) throws Exception {
+	@Override
+	protected void channelRead0(ChannelHandlerContext channelHandlerContext, byte[] bytes) throws Exception {
 		if (privateChannel != null) {
-			privateChannel.writeAndFlush(msg).sync();
+			privateChannel.writeAndFlush(bytes).sync();
 		}
 	}
-	
-    
-    @Override
+
+	@Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		LogUtil.warning(cause.getMessage());
        ctx.channel().close().sync();

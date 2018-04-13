@@ -70,11 +70,10 @@ public class CommandLineParser {
         params.put("command", command);
         params.put("params", param);
         try {
-        	JsonObject result = instanceUtils.sendHttpRequest("https://comsat4.iotracks.com" + Constants.API_COMMAND_LINE, params);
-        	return result;
+        	return instanceUtils.sendHttpRequest("https://localhost" + Constants.API_COMMAND_LINE, params);
         } catch (Exception e) {
         	return null;
         }
 	}
-	
+
 }

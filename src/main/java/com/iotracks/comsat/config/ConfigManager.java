@@ -47,8 +47,9 @@ public class ConfigManager {
                 config.setHeartBeatThreshold1(mapping.getInt("heartbeatabsencethresholdport1"));
                 config.setHeartBeatThreshold2(mapping.getInt("heartbeatabsencethresholdport2"));
 
-                if (config.getPort1() == 0)
-                	directsCount++;
+                if (config.getPort1() == 0) {
+					directsCount++;
+				}
                 configRepository.put(config.getId(), config);
             }
         } catch (Exception e) {
@@ -107,8 +108,9 @@ public class ConfigManager {
     }
 
     public static synchronized void removeMapping(String mappingId) throws Exception {
-    	if (!configRepository.containsKey(mappingId))
-    		throw new NotFoundException("invalid id");
+    	if (!configRepository.containsKey(mappingId)) {
+			throw new NotFoundException("invalid id");
+		}
         Configuration config = configRepository.remove(mappingId);
         
         saveConfiguration();

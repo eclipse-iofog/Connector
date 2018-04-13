@@ -1,9 +1,6 @@
 package com.iotracks.comsat.private_socket;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.iotracks.comsat.utils.Constants;
 import com.iotracks.comsat.utils.LogUtil;
@@ -38,8 +35,6 @@ public class PrivateSocket implements Runnable {
 	
 	public void run() {
 		while (!stopListening) {
-//			EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-//			EventLoopGroup workerGroup = new NioEventLoopGroup(1);
 			try {
 				ServerBootstrap b = new ServerBootstrap();
 				b.group(Constants.bossGroup, Constants.workerGroup)
@@ -58,10 +53,6 @@ public class PrivateSocket implements Runnable {
 			} catch (Exception e) {
 				LogUtil.warning(e.getMessage());
 			}
-//			finally {
-//				bossGroup.shutdownGracefully();
-//				workerGroup.shutdownGracefully();
-//			}
 
 			if (!stopListening) {
 				try {
@@ -92,16 +83,13 @@ public class PrivateSocket implements Runnable {
 		}
 	}
 
-	public Channel mapChannel(Channel publicChannel) {
+	public Optional<Channel> mapChannel(Channel publicChannel) {
 		synchronized (PrivateSocket.class) {
-			for (Channel ch: connections) {
-				if (!channelsMapping.containsKey(ch)) {
-					channelsMapping.put(ch, publicChannel);
-					return ch;
-				}
-			}
+			return connections.stream()
+					.filter(ch -> !channelsMapping.containsKey(ch))
+					.peek(ch -> channelsMapping.put(ch, publicChannel))
+					.findAny();
 		}
-		return null;
 	}
 
 	public void releaseChannel(Channel privateChannel) {
@@ -129,16 +117,10 @@ public class PrivateSocket implements Runnable {
 	}
 
 	public Channel getPrivateChannel() {
-		if (connections.size() > 0) 
-			return connections.get(0);
-		else
-			return null;
+		return connections.size() > 0 ? connections.get(0) : null;
 	}
 	
 	public String getStatus() {
-		if (channel.isActive())
-			return "Active";
-		else
-			return "Inactive";
+		return channel.isActive() ? "Active" : "Inactive";
 	}
 }
