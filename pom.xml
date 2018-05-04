@@ -33,7 +33,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>com.iotracks.comsat.ComSat</mainClass>
+                                    <mainClass>main.java.org.eclipse.iofog.comsat.ComSat</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
