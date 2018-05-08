@@ -1,4 +1,4 @@
-package main.java.org.eclipse.iofog.comsat.utils;
+package org.eclipse.iofog.comsat.utils;
 
 import java.util.Date;
 import java.util.logging.Formatter;

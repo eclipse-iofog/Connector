@@ -1,12 +1,12 @@
-package main.java.org.eclipse.iofog.comsat.utils;
+package org.eclipse.iofog.comsat.utils;
 
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
-import main.java.org.eclipse.iofog.comsat.config.Configuration;
-import main.java.org.eclipse.iofog.comsat.private_socket.PrivateSocket;
-import main.java.org.eclipse.iofog.comsat.public_socket.PublicSocket;
+import org.eclipse.iofog.comsat.config.Configuration;
+import org.eclipse.iofog.comsat.private_socket.PrivateSocket;
+import org.eclipse.iofog.comsat.public_socket.PublicSocket;
 
 public class SocketsManager {
 	private static Map<String, PublicSocket> publicSockets = new HashMap<>();

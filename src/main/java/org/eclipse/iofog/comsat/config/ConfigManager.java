@@ -1,8 +1,8 @@
-package main.java.org.eclipse.iofog.comsat.config;
+package org.eclipse.iofog.comsat.config;
 
-import main.java.org.eclipse.iofog.comsat.exceptions.DuplicateIdException;
-import main.java.org.eclipse.iofog.comsat.utils.Constants;
-import main.java.org.eclipse.iofog.comsat.utils.LogUtil;
+import org.eclipse.iofog.comsat.exceptions.DuplicateIdException;
+import org.eclipse.iofog.comsat.utils.Constants;
+import org.eclipse.iofog.comsat.utils.LogUtil;
 
 import javax.json.Json;
 import javax.json.JsonArray;

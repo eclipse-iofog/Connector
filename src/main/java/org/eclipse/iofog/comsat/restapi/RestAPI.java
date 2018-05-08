@@ -1,4 +1,4 @@
-package main.java.org.eclipse.iofog.comsat.restapi;
+package org.eclipse.iofog.comsat.restapi;
 
 public class RestAPI {
 	

@@ -1,4 +1,4 @@
-package main.java.org.eclipse.iofog.comsat.config;
+package org.eclipse.iofog.comsat.config;
 
 import javax.json.JsonObject;
 

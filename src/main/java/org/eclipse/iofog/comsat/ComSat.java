@@ -1,4 +1,4 @@
-package main.java.org.eclipse.iofog.comsat;
+package org.eclipse.iofog.comsat;
 
 import java.io.FileOutputStream;
 import java.util.Map.Entry;
@@ -7,13 +7,13 @@ import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 
-import main.java.org.eclipse.iofog.comsat.command_line.CommandLineParser;
-import main.java.org.eclipse.iofog.comsat.config.ConfigManager;
-import main.java.org.eclipse.iofog.comsat.config.Configuration;
-import main.java.org.eclipse.iofog.comsat.restapi.RestAPI;
-import main.java.org.eclipse.iofog.comsat.utils.Constants;
-import main.java.org.eclipse.iofog.comsat.utils.Settings;
-import main.java.org.eclipse.iofog.comsat.utils.SocketsManager;
+import org.eclipse.iofog.comsat.command_line.CommandLineParser;
+import org.eclipse.iofog.comsat.config.ConfigManager;
+import org.eclipse.iofog.comsat.config.Configuration;
+import org.eclipse.iofog.comsat.restapi.RestAPI;
+import org.eclipse.iofog.comsat.utils.Constants;
+import org.eclipse.iofog.comsat.utils.Settings;
+import org.eclipse.iofog.comsat.utils.SocketsManager;
 
 /**
  * Created by Saeid on 6/25/2016.

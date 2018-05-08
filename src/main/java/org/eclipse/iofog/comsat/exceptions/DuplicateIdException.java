@@ -1,4 +1,4 @@
-package main.java.org.eclipse.iofog.comsat.exceptions;
+package org.eclipse.iofog.comsat.exceptions;
 
 public class DuplicateIdException extends Exception {
 	private static final long serialVersionUID = -5075882609298125930L;

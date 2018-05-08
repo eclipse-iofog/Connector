@@ -1,4 +1,4 @@
-package main.java.org.eclipse.iofog.comsat.restapi.handlers;
+package org.eclipse.iofog.comsat.restapi.handlers;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -8,8 +8,8 @@ import java.util.concurrent.Callable;
 import javax.json.Json;
 import javax.json.JsonObject;
 
-import main.java.org.eclipse.iofog.comsat.command_line.CommandLineParser;
-import main.java.org.eclipse.iofog.comsat.utils.LogUtil;
+import org.eclipse.iofog.comsat.command_line.CommandLineParser;
+import org.eclipse.iofog.comsat.utils.LogUtil;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;

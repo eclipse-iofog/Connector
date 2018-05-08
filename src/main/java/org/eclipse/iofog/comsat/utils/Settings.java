@@ -1,4 +1,4 @@
-package main.java.org.eclipse.iofog.comsat.utils;
+package org.eclipse.iofog.comsat.utils;
 
 import java.io.FileInputStream;
 import java.util.HashMap;

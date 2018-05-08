@@ -1,13 +1,13 @@
-package main.java.org.eclipse.iofog.comsat.command_line;
+package org.eclipse.iofog.comsat.command_line;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.json.JsonObject;
 
-import main.java.org.eclipse.iofog.comsat.ComSat;
-import main.java.org.eclipse.iofog.comsat.InstanceUtils;
-import main.java.org.eclipse.iofog.comsat.utils.Constants;
+import org.eclipse.iofog.comsat.ComSat;
+import org.eclipse.iofog.comsat.InstanceUtils;
+import org.eclipse.iofog.comsat.utils.Constants;
 
 public class CommandLineParser {
 

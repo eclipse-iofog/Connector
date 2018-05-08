@@ -1,8 +1,8 @@
-package main.java.org.eclipse.iofog.comsat.restapi;
+package org.eclipse.iofog.comsat.restapi;
 
-import main.java.org.eclipse.iofog.comsat.utils.Constants;
-import main.java.org.eclipse.iofog.comsat.utils.LogUtil;
-import main.java.org.eclipse.iofog.comsat.utils.SslManager;
+import org.eclipse.iofog.comsat.utils.Constants;
+import org.eclipse.iofog.comsat.utils.LogUtil;
+import org.eclipse.iofog.comsat.utils.SslManager;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;

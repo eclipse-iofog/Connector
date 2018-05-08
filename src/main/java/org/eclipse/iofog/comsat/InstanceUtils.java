@@ -1,4 +1,4 @@
-package main.java.org.eclipse.iofog.comsat;
+package org.eclipse.iofog.comsat;
 
 import java.io.StringReader;
 import java.util.Map;

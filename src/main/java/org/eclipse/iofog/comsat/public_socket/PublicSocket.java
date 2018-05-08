@@ -1,10 +1,10 @@
-package main.java.org.eclipse.iofog.comsat.public_socket;
+package org.eclipse.iofog.comsat.public_socket;
 
-import main.java.org.eclipse.iofog.comsat.private_socket.PrivateSocket;
-import main.java.org.eclipse.iofog.comsat.utils.Constants;
-import main.java.org.eclipse.iofog.comsat.utils.LogUtil;
-import main.java.org.eclipse.iofog.comsat.utils.Settings;
-import main.java.org.eclipse.iofog.comsat.utils.SslManager;
+import org.eclipse.iofog.comsat.private_socket.PrivateSocket;
+import org.eclipse.iofog.comsat.utils.Constants;
+import org.eclipse.iofog.comsat.utils.LogUtil;
+import org.eclipse.iofog.comsat.utils.Settings;
+import org.eclipse.iofog.comsat.utils.SslManager;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;

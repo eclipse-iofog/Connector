@@ -1,4 +1,4 @@
-package main.java.org.eclipse.iofog.comsat.restapi;
+package org.eclipse.iofog.comsat.restapi;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -8,17 +8,17 @@ import java.util.concurrent.Callable;
 import javax.json.Json;
 import javax.json.JsonObject;
 
-import main.java.org.eclipse.iofog.comsat.ComSat;
-import main.java.org.eclipse.iofog.comsat.command_line.CommandLineParser;
-import main.java.org.eclipse.iofog.comsat.restapi.handlers.StatusHandler;
-import main.java.org.eclipse.iofog.comsat.restapi.handlers.CommandLineHandler;
-import main.java.org.eclipse.iofog.comsat.restapi.handlers.DirectConnectionAddHandler;
-import main.java.org.eclipse.iofog.comsat.restapi.handlers.DirectConnectionRemoveHandler;
-import main.java.org.eclipse.iofog.comsat.restapi.handlers.DirectConnectionRequestHandler;
-import main.java.org.eclipse.iofog.comsat.restapi.handlers.NewMappingHandler;
-import main.java.org.eclipse.iofog.comsat.restapi.handlers.RemoveMappingHandler;
-import main.java.org.eclipse.iofog.comsat.utils.Constants;
-import main.java.org.eclipse.iofog.comsat.utils.LogUtil;
+import org.eclipse.iofog.comsat.ComSat;
+import org.eclipse.iofog.comsat.command_line.CommandLineParser;
+import org.eclipse.iofog.comsat.restapi.handlers.StatusHandler;
+import org.eclipse.iofog.comsat.restapi.handlers.CommandLineHandler;
+import org.eclipse.iofog.comsat.restapi.handlers.DirectConnectionAddHandler;
+import org.eclipse.iofog.comsat.restapi.handlers.DirectConnectionRemoveHandler;
+import org.eclipse.iofog.comsat.restapi.handlers.DirectConnectionRequestHandler;
+import org.eclipse.iofog.comsat.restapi.handlers.NewMappingHandler;
+import org.eclipse.iofog.comsat.restapi.handlers.RemoveMappingHandler;
+import org.eclipse.iofog.comsat.utils.Constants;
+import org.eclipse.iofog.comsat.utils.LogUtil;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

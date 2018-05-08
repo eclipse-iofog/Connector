@@ -1,4 +1,4 @@
-package main.java.org.eclipse.iofog.comsat.private_socket;
+package org.eclipse.iofog.comsat.private_socket;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
