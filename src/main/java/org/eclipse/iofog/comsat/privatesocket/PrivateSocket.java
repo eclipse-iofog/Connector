@@ -1,4 +1,4 @@
-package org.eclipse.iofog.comsat.private_socket;
+package org.eclipse.iofog.comsat.privatesocket;
 
 import java.util.*;
 

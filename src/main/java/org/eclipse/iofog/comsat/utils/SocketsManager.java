@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.iofog.comsat.config.Configuration;
-import org.eclipse.iofog.comsat.private_socket.PrivateSocket;
-import org.eclipse.iofog.comsat.public_socket.PublicSocket;
+import org.eclipse.iofog.comsat.privatesocket.PrivateSocket;
+import org.eclipse.iofog.comsat.publicsocket.PublicSocket;
 
 public class SocketsManager {
 	private static Map<String, PublicSocket> publicSockets = new HashMap<>();

@@ -1,6 +1,6 @@
-package org.eclipse.iofog.comsat.public_socket;
+package org.eclipse.iofog.comsat.publicsocket;
 
-import org.eclipse.iofog.comsat.private_socket.PrivateSocket;
+import org.eclipse.iofog.comsat.privatesocket.PrivateSocket;
 import org.eclipse.iofog.comsat.utils.Constants;
 import org.eclipse.iofog.comsat.utils.LogUtil;
 import org.eclipse.iofog.comsat.utils.Settings;

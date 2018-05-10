@@ -1,4 +1,4 @@
-package org.eclipse.iofog.comsat.command_line;
+package org.eclipse.iofog.comsat.commandline;
 
 import java.util.HashMap;
 import java.util.Map;

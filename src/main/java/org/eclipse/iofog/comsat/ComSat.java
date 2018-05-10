@@ -7,7 +7,7 @@ import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 
-import org.eclipse.iofog.comsat.command_line.CommandLineParser;
+import org.eclipse.iofog.comsat.commandline.CommandLineParser;
 import org.eclipse.iofog.comsat.config.ConfigManager;
 import org.eclipse.iofog.comsat.config.Configuration;
 import org.eclipse.iofog.comsat.restapi.RestAPI;

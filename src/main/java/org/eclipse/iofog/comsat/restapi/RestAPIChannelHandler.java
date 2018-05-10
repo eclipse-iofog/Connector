@@ -9,7 +9,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 
 import org.eclipse.iofog.comsat.ComSat;
-import org.eclipse.iofog.comsat.command_line.CommandLineParser;
+import org.eclipse.iofog.comsat.commandline.CommandLineParser;
 import org.eclipse.iofog.comsat.restapi.handlers.StatusHandler;
 import org.eclipse.iofog.comsat.restapi.handlers.CommandLineHandler;
 import org.eclipse.iofog.comsat.restapi.handlers.DirectConnectionAddHandler;

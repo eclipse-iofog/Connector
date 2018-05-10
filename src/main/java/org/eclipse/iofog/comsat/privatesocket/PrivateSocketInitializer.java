@@ -1,6 +1,4 @@
-package org.eclipse.iofog.comsat.public_socket;
-
-import org.eclipse.iofog.comsat.private_socket.PrivateSocket;
+package org.eclipse.iofog.comsat.privatesocket;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -8,26 +6,30 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
 import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslHandler;
 
-public class PublicSocketInitializer extends ChannelInitializer<SocketChannel> {
+public class PrivateSocketInitializer extends ChannelInitializer<SocketChannel> {
 
-	private final PrivateSocket privateSocket;
 	private final SslContext sslCtx;
+	private final PrivateSocket socketServer;
 
-    public PublicSocketInitializer(PrivateSocket privateSocket, SslContext sslCtx) {
-        this.privateSocket = privateSocket;
+    public PrivateSocketInitializer(SslContext sslCtx, PrivateSocket socketServer) {
         this.sslCtx = sslCtx;
+        this.socketServer = socketServer;
     }
     
     @Override
 	protected void initChannel(SocketChannel ch) throws Exception {
     	ChannelPipeline pipeline = ch.pipeline();
 
-        if (sslCtx != null)
-        	pipeline.addLast(sslCtx.newHandler(ch.alloc()));
+    	if (sslCtx != null) {
+    		SslHandler sslHandler = sslCtx.newHandler(ch.alloc());
+    		pipeline.addLast(sslHandler);
+    	}
+    	
         pipeline.addLast(new ByteArrayDecoder());
         pipeline.addLast(new ByteArrayEncoder());
-        pipeline.addLast(new PublicSocketHandler(privateSocket));
+        pipeline.addLast(new PrivateSocketHandler(sslCtx, socketServer));
     }
 
 }

@@ -8,8 +8,8 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import org.eclipse.iofog.comsat.config.ConfigManager;
-import org.eclipse.iofog.comsat.private_socket.PrivateSocket;
-import org.eclipse.iofog.comsat.public_socket.PublicSocket;
+import org.eclipse.iofog.comsat.privatesocket.PrivateSocket;
+import org.eclipse.iofog.comsat.publicsocket.PublicSocket;
 import org.eclipse.iofog.comsat.utils.Constants;
 import org.eclipse.iofog.comsat.utils.LogUtil;
 import org.eclipse.iofog.comsat.utils.SocketsManager;

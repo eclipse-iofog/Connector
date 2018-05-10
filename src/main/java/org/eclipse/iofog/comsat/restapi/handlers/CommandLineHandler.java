@@ -8,7 +8,7 @@ import java.util.concurrent.Callable;
 import javax.json.Json;
 import javax.json.JsonObject;
 
-import org.eclipse.iofog.comsat.command_line.CommandLineParser;
+import org.eclipse.iofog.comsat.commandline.CommandLineParser;
 import org.eclipse.iofog.comsat.utils.LogUtil;
 
 import io.netty.buffer.ByteBuf;
