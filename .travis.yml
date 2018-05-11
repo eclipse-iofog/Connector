@@ -55,24 +55,26 @@ jobs:
     - sshpass -p $STAGE_MACHINE_PASSWORD scp target/comsat-jar-with-dependencies.jar
       $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/comsat-packaging-rpm/usr/bin/comsat.jar
     - sshpass -p $STAGE_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no
-      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP "cd /comsat-packaging; fpm -s dir -t deb -n \"comsat${DEV}\" 
-      -v $VERSION -a all --deb-no-default-config-files --after-install debian.sh --after-remove remove.sh --before-upgrade 
-      upgrade.sh --after-upgrade debian.sh etc usr; package_cloud push iofog/comsat/ubuntu/precise 
-      comsat${DEV}_${VERSION}_all.deb; package_cloud push iofog/comsat/ubuntu/trusty comsat${DEV}_${VERSION}_all.deb; 
-      package_cloud push iofog/comsat/ubuntu/utopic comsat${DEV}_${VERSION}_all.deb; package_cloud push 
-      iofog/comsat/ubuntu/vivid comsat${DEV}_${VERSION}_all.deb; package_cloud push iofog/comsat/ubuntu/wily 
-      comsat${DEV}_${VERSION}_all.deb; package_cloud push iofog/comsat/ubuntu/xenial comsat${DEV}_${VERSION}_all.deb; 
-      package_cloud push iofog/comsat/debian/wheezy comsat${DEV}_${VERSION}_all.deb; package_cloud push 
-      iofog/comsat/debian/jessie comsat${DEV}_${VERSION}_all.deb; package_cloud push iofog/comsat/debian/stretch 
-      comsat${DEV}_${VERSION}_all.deb; package_cloud push iofog/comsat/debian/buster comsat${DEV}_${VERSION}_all.deb; 
-      package_cloud push iofog/comsat/raspbian/wheezy comsat${DEV}_${VERSION}_all.deb; package_cloud push 
-      iofog/comsat/raspbian/jessie comsat${DEV}_${VERSION}_all.deb; package_cloud push iofog/comsat/raspbian/stretch 
-      comsat${DEV}_${VERSION}_all.deb; package_cloud push iofog/comsat/raspbian/buster comsat${DEV}_${VERSION}_all.deb; 
-      cd /comsat-packaging-rpm; fpm -s dir -t rpm -n \"comsat${DEV}\" -v $VERSION -a all --rpm-os 'linux' 
-      --after-install rpm.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade rpm.sh etc usr; 
-      package_cloud push iofog/comsat/fedora/22 comsat${DEV}-${VERSION}-1.noarch.rpm; package_cloud 
-      push iofog/comsat/fedora/23 comsat${DEV}-${VERSION}-1.noarch.rpm; package_cloud push iofog/comsat/fedora/24 
-      comsat${DEV}-${VERSION}-1.noarch.rpm; package_cloud push iofog/comsat/el/7 comsat${DEV}-${VERSION}-1.noarch.rpm"
+      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP "cd /comsat-packaging; fpm -s dir -t deb -n \"comsat${DEV}\" -v $VERSION -a all --deb-no-default-config-files --after-install debian.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade debian.sh etc usr; 
+      package_cloud push iofog/comsat/ubuntu/precise comsat${DEV}_${VERSION}_all.deb; 
+      package_cloud push iofog/comsat/ubuntu/trusty comsat${DEV}_${VERSION}_all.deb; 
+      package_cloud push iofog/comsat/ubuntu/utopic comsat${DEV}_${VERSION}_all.deb; 
+      package_cloud push iofog/comsat/ubuntu/vivid comsat${DEV}_${VERSION}_all.deb; 
+      package_cloud push iofog/comsat/ubuntu/wily comsat${DEV}_${VERSION}_all.deb; 
+      package_cloud push iofog/comsat/ubuntu/xenial comsat${DEV}_${VERSION}_all.deb; 
+      package_cloud push iofog/comsat/debian/wheezy comsat${DEV}_${VERSION}_all.deb; 
+      package_cloud push iofog/comsat/debian/jessie comsat${DEV}_${VERSION}_all.deb; 
+      package_cloud push iofog/comsat/debian/stretch comsat${DEV}_${VERSION}_all.deb; 
+      package_cloud push iofog/comsat/debian/buster comsat${DEV}_${VERSION}_all.deb; 
+      package_cloud push iofog/comsat/raspbian/wheezy comsat${DEV}_${VERSION}_all.deb; 
+      package_cloud push iofog/comsat/raspbian/jessie comsat${DEV}_${VERSION}_all.deb; 
+      package_cloud push iofog/comsat/raspbian/stretch comsat${DEV}_${VERSION}_all.deb; 
+      package_cloud push iofog/comsat/raspbian/buster comsat${DEV}_${VERSION}_all.deb; 
+      cd /comsat-packaging-rpm; fpm -s dir -t rpm -n \"comsat${DEV}\" -v $VERSION -a all --rpm-os 'linux' --after-install rpm.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade rpm.sh etc usr; 
+      package_cloud push iofog/comsat/fedora/22 comsat${DEV}-${VERSION}-1.noarch.rpm; 
+      package_cloud push iofog/comsat/fedora/23 comsat${DEV}-${VERSION}-1.noarch.rpm; 
+      package_cloud push iofog/comsat/fedora/24 comsat${DEV}-${VERSION}-1.noarch.rpm; 
+      package_cloud push iofog/comsat/el/7 comsat${DEV}-${VERSION}-1.noarch.rpm"
     #- if [ "$TRAVIS_BRANCH" == "dev_package" ]; then sshpass -p $PRE_PROD_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no
     #  $PRE_PROD_MACHINE_USERNAME@$PRE_PROD_MACHINE_IP "service comsat stop; apt-get install --only-upgrade comsat-dev -y; service comsat start"; 
     #  else sshpass -p $PROD_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no
