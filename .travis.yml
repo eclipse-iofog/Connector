@@ -25,7 +25,7 @@ jobs:
     before_install:
     - sudo apt-get install sshpass xml-twig-tools
     script:
-    - export VERSION=`xml_grep 'version' pom.xml --text_only`
+    #- export VERSION=`xml_grep 'version' pom.xml --text_only`
     - mvn clean install
     #- sshpass -p $DEV_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $DEV_MACHINE_USERNAME@$DEV_MACHINE_IP 
     #  "service iofog stop; rm -rf /usr/bin/iofogd_bckp.jar /usr/bin/iofog_bckp.jar; mv /usr/bin/iofogd.jar
