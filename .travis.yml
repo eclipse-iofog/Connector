@@ -70,7 +70,7 @@ jobs:
       #package_cloud push iofog/comsat/raspbian/jessie comsat${DEV}_${VERSION}_all.deb; 
       #package_cloud push iofog/comsat/raspbian/stretch comsat${DEV}_${VERSION}_all.deb; 
       #package_cloud push iofog/comsat/raspbian/buster comsat${DEV}_${VERSION}_all.deb; 
-      cd /comsat-packaging-rpm; fpm -s dir -t rpm -n \"comsat${DEV}\" -v $VERSION -a all --rpm-os 'linux' --after-install rpm.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade rpm.sh etc usr; 
+      cd /comsat-packaging-rpm; fpm -s dir -t rpm -n \"comsat${DEV}\" -v $VERSION -a all --rpm-os 'linux' --after-install rpm.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade rpm.sh etc usr" 
       #package_cloud push iofog/comsat/fedora/22 comsat${DEV}-${VERSION}-1.noarch.rpm; 
       #package_cloud push iofog/comsat/fedora/23 comsat${DEV}-${VERSION}-1.noarch.rpm; 
       #package_cloud push iofog/comsat/fedora/24 comsat${DEV}-${VERSION}-1.noarch.rpm; 
