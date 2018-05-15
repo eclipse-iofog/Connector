@@ -42,7 +42,7 @@ jobs:
     - sudo apt-get install sshpass xml-twig-tools
     script:
     - if [ "$TRAVIS_BRANCH" == "dev_package" ]; then export DEV=-dev; fi
-    - export VERSION=`xml_grep 'version' pom.xml --text_only`
+    - export VERSION=`xml_grep --cond='project/version' pom.xml --text_only`
     - mvn clean install
     - sshpass -p $STAGE_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no
       $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP "rm -rf /comsat-packaging-rpm/*; rm -rf /comsat-packaging/*;"
@@ -55,8 +55,7 @@ jobs:
     - sshpass -p $STAGE_MACHINE_PASSWORD scp target/comsat-jar-with-dependencies.jar
       $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/comsat-packaging-rpm/usr/bin/comsat.jar
     - echo ${VERSION}
-    - echo ${DEV}
-    - sshpass -p $STAGE_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP "cd /comsat-packaging; fpm -s dir -t deb -n \"comsat${DEV}\" -v ${VERSION} -a all --deb-no-default-config-files --after-install debian.sh etc usr;"
+    - sshpass -p $STAGE_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP "cd /comsat-packaging; fpm -s dir -t deb -n \"comsat${DEV}\" -v $VERSION -a all --deb-no-default-config-files --after-install debian.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade debian.sh etc usr"
       #package_cloud push iofog/comsat/ubuntu/precise comsat${DEV}_${VERSION}_all.deb; 
       #package_cloud push iofog/comsat/ubuntu/trusty comsat${DEV}_${VERSION}_all.deb; 
       #package_cloud push iofog/comsat/ubuntu/utopic comsat${DEV}_${VERSION}_all.deb; 
