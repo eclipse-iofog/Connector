@@ -14,20 +14,20 @@ When you put ComSat, anywhere on your network (it can be even public Internet), 
 
 1.&ensp;In order to install ComSat, you need to have Java installed on your machine.
 
-	   sudo add-apt-repository ppa:webupd8team/java
+     sudo add-apt-repository ppa:webupd8team/java
      sudo apt-get update
      sudo apt-get install oracle-java8-installer
 
 2 &ensp;Install Comsat
 
-	   curl -s https://packagecloud.io/install/repositories/iofog/comsat/script.deb.sh | sudo bash
+     curl -s https://packagecloud.io/install/repositories/iofog/comsat/script.deb.sh | sudo bash
      sudo apt-get install comsat (release version)
      or
      sudo apt-get install comsat-dev (developer's version)
 	   
 3.&ensp;Setup certificates if needed (After installation there are config.json, server-cert.per and server-key.per files present in the /etc/comsat directory)
 
-	   - config.json contains the list of existing connections
+     - config.json contains the list of existing connections
      - server-cert.per is a public key that tells that Fog Controller is allowed to ComSat
      - server-key.per is a private key that has its own identity and uses it to talk to ioFog agent
 
