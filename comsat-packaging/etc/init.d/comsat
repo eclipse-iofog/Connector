@@ -20,16 +20,16 @@ case $1 in
 
 	echo "Starting comsat service..."
         cd /usr/bin
-        sudo java -jar comsat.jar start &
+        sudo java -jar comsatd.jar start &
     ;;
     stop)
         cd /usr/bin
-        sudo java -jar comsat.jar stop
+        sudo java -jar comsatd.jar stop
     ;;
     restart)
  	echo "Restarting comsat service..."
 	cd /usr/bin
-   	sudo java -jar comsat.jar stop
-  	sudo java -jar comsat.jar start &
+   	sudo java -jar comsatd.jar stop
+  	sudo java -jar comsatd.jar start &
     ;;
 esac
