@@ -42,7 +42,7 @@ public enum CommandLineAction {
 
 		@Override
 		public String perform(String[] args) {
-			return isAnotherInstanceRunning() ? "Comsat is already running." : "Enter \"service comsat stop\"";
+			return isAnotherInstanceRunning() ? "Comsat is already running." : "Enter \"service comsat start\"";
 		}
 	},
 	STATUS_ACTION {

@@ -12,7 +12,7 @@ else
 fi
 #echo "Check for configs.json"
 
-mkdir /var/log/comsat
+mkdir -p /var/log/comsat
 
 chown -R :comsat /etc/comsat
 chown -R :comsat /var/log/comsat
