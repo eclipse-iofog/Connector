@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
 
 public class Settings {
 	private static final Map<Integer, Boolean> validPorts = new HashMap<>();
@@ -28,12 +29,20 @@ public class Settings {
 	
 	public static void loadSettings() throws Exception {
 			JsonObject settings = Json.createReader(new FileInputStream(Constants.SETTINGS_FILENAME)).readObject();
-			brokerPort = settings.getInt("broker");
-			address = settings.getString("address");
-			JsonArray ports = settings.getJsonArray("ports");
+			brokerPort = getValue(settings::getInt, "broker");
+			address = getValue(settings::getString, "address");
+			JsonArray ports = getValue(settings::getJsonArray, "ports");
 			validatePorts(ports);
-			JsonArray excludePorts = settings.getJsonArray("exclude");
+			JsonArray excludePorts = getValue(settings::getJsonArray, "exclude");
 			validateExcludePorts(excludePorts);
+	}
+
+	private static <T> T getValue(Function<String, T> extractor, String key) throws InvalidSettingException {
+		try {
+			return extractor.apply(key);
+		} catch (NullPointerException ex) {
+			throw new InvalidSettingException("Following setting is not presented in " + Constants.SETTINGS_FILENAME + ": " + key);
+		}
 	}
 
 	private static void validatePorts(JsonArray ports) throws InvalidSettingException {

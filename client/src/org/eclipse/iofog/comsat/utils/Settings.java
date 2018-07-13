@@ -23,8 +23,12 @@ public class Settings {
 	private static String address;
 
 	public static void loadSettings() throws Exception {
+		try {
 			JsonObject settings = Json.createReader(new FileInputStream(SETTINGS_FILENAME)).readObject();
 			address = settings.getString("address");
+		} catch (NullPointerException ex) {
+			throw new Exception("Setting \"address\" is not presented in " + SETTINGS_FILENAME);
+		}
 	}
 
 	public static String getAddress() {
