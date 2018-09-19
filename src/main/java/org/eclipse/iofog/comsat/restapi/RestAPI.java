@@ -17,12 +17,19 @@ public class RestAPI {
 	
 	private static RestAPI instance = null;
 	private RestAPIServer apiServer;
-	
-	public static RestAPI getInstance() {
+	private boolean secure;
+
+	public void setSecure(boolean secure) {
+		this.secure = secure;
+	}
+
+	public static RestAPI getInstance(boolean devMode) {
 		if (instance == null) {
 			synchronized (RestAPI.class) {
-				if (instance == null) 
+				if (instance == null) {
 					instance = new RestAPI();
+					instance.setSecure(!devMode);
+				}
 			}
 		}
 		
@@ -30,7 +37,7 @@ public class RestAPI {
 	}
 	
 	public void start() {
-        apiServer = RestAPIServer.getInstance();
+        apiServer = RestAPIServer.getInstance(secure);
         new Thread(apiServer).start();
 	}
 	

@@ -41,6 +41,6 @@ public class RestAPIChannelInitializer extends ChannelInitializer<SocketChannel>
         	p.addLast(sslCtx.newHandler(ch.alloc()));
         p.addLast(new HttpServerCodec());
 		p.addLast(new HttpObjectAggregator(65535));
-		p.addLast(new RestAPIChannelHandler(executor, sslCtx));
+		p.addLast(new RestAPIChannelHandler(executor));
     }
 }

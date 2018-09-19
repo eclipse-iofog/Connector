@@ -45,10 +45,11 @@ public class ComSat {
 			System.exit(1);
 		
 		Settings.loadSettings();
-		
-		ConfigManager.loadConfiguration();
-        
-        RestAPI server = RestAPI.getInstance();
+
+		boolean devMode = ConfigManager.loadConfiguration();
+
+		RestAPI server = RestAPI.getInstance(devMode);
+
         server.start();
         
         Thread.sleep(1000);
