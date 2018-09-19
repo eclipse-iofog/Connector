@@ -1,90 +1,27 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ /********************************************************************************
-  ~  * Copyright (c) 2018 Edgeworx, Inc.
-  ~  *
-  ~  * This program and the accompanying materials are made available under the
-  ~  * terms of the Eclipse Public License v. 2.0 which is available at
-  ~  * http://www.eclipse.org/legal/epl-2.0
-  ~  *
-  ~  * SPDX-License-Identifier: EPL-2.0
-  ~  ********************************************************************************/
-  ~
-  -->
+    Copyright (c) 2018 Edgeworx, Inc.
+    All rights reserved. This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License 2.0
+    which accompanies this distribution, and is available at
+    http://www.eclipse.org/legal/epl-v20.html
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+    Contributors:
+    Saeid Baghbidi
+    Kilton Hopkins
+    Ashita Nagar
+ -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>org.eclipse.iofog</groupId>
     <artifactId>comsat</artifactId>
-    <version>2.0.1</version>
+    <version>2.0.3</version>
+    <name>comsat</name>
+    <packaging>pom</packaging>
 
-    <build>
-        <sourceDirectory>src/main/java</sourceDirectory>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>build-client</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <archive>
-                                <manifest>
-                                    <mainClass>org.eclipse.iofog.comsat.ComSat</mainClass>
-                                </manifest>
-                            </archive>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
-                            <finalName>comsat</finalName>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
-    <properties>
-        <java.version>1.8</java.version>
-    </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>4.0.34.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.json</groupId>
-            <artifactId>javax.json-api</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>javax.json</artifactId>
-            <version>1.0.4</version>
-        </dependency>
-		<dependency>
-		    <groupId>org.glassfish.jersey.core</groupId>
-		    <artifactId>jersey-client</artifactId>
-		    <version>2.23.2</version>
-		</dependency>
-    </dependencies>
+    <modules>
+        <module>daemon</module>
+        <module>client</module>
+    </modules>
 
 </project>

@@ -11,7 +11,7 @@ else
   mv /etc/comsat/configs_new.json /etc/comsat/configs.json
 fi
 
-mkdir /var/log/comsat
+mkdir -p /var/log/comsat
 
 chown -R :comsat /etc/comsat
 chown -R :comsat /var/log/comsat
