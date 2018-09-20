@@ -46,9 +46,9 @@ public class RestAPIServer implements Runnable {
 			synchronized (RestAPIServer.class) {
 				if (instance == null) {
                     if (secure)
-                        instance = new RestAPIServer(443);
+                        instance = new RestAPIServer(Constants.HTTPS_PORT);
                     else
-                        instance = new RestAPIServer(8080);
+                        instance = new RestAPIServer(Constants.HTTP_PORT);
                 }
 			}
 		}
@@ -59,7 +59,7 @@ public class RestAPIServer implements Runnable {
     public void run() {
         try {
 
-            if(instance.getPort() == 443)
+            if(instance.getPort() == Constants.HTTPS_PORT)
                 sslCtx = SslManager.getSslContext();
 
             ServerBootstrap b = new ServerBootstrap();

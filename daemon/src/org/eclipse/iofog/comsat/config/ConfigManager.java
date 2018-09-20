@@ -39,9 +39,13 @@ public class ConfigManager {
     private static Map<String, Configuration> configRepository = new HashMap<>();
     private static Map<String, DirectConnection> directRequestsRepository = new HashMap<>();
     private static int directsCount = 0;
+    private static boolean devMode = true;
+
+    public static boolean isDevMode(){
+    	return devMode;
+	}
     
-    public static synchronized boolean loadConfiguration() {
-    	boolean devMode = true;
+    public static synchronized void loadConfiguration() {
 
         try {
             JsonReader in = Json.createReader(new FileInputStream(Constants.CONFIG_FILENAME));
@@ -71,8 +75,6 @@ public class ConfigManager {
         } catch (Exception e) {
             LogUtil.warning(e.getMessage());
         }
-
-        return devMode;
     }
     
     public static synchronized void saveConfiguration() throws Exception {

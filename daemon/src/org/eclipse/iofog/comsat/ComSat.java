@@ -56,9 +56,9 @@ public class ComSat {
                         break;
                 }
             } else if ("start".equals(args[0])) {
-                boolean devMode = ConfigManager.loadConfiguration();
+                ConfigManager.loadConfiguration();
 
-                RestAPI server = RestAPI.getInstance(devMode);
+                RestAPI server = RestAPI.getInstance(ConfigManager.isDevMode());
                 server.start();
 
                 Thread.sleep(1000);
