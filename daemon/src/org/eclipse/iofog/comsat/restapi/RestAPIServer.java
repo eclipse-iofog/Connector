@@ -27,23 +27,29 @@ import io.netty.handler.ssl.SslContext;
  * Created by Saeid on 6/26/2016.
  */
 public class RestAPIServer implements Runnable {
-    private final int PORT = 443;
 
-//    private EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-//    private EventLoopGroup workerGroup = new NioEventLoopGroup();
+    private int port;
     private Channel ch;
-    private SslContext sslCtx;
+    private SslContext sslCtx = null;
     private static RestAPIServer instance = null;
     
-    private RestAPIServer() {
-    	
+    private RestAPIServer(int port) {
+    	this.port = port;
     }
-    
-    public static RestAPIServer getInstance() {
+
+    public int getPort() {
+        return port;
+    }
+
+    public static RestAPIServer getInstance(boolean secure) {
 		if (instance == null) {
 			synchronized (RestAPIServer.class) {
-				if (instance == null) 
-					instance = new RestAPIServer();
+				if (instance == null) {
+                    if (secure)
+                        instance = new RestAPIServer(Constants.HTTPS_PORT);
+                    else
+                        instance = new RestAPIServer(Constants.HTTP_PORT);
+                }
 			}
 		}
 		
@@ -52,23 +58,21 @@ public class RestAPIServer implements Runnable {
     
     public void run() {
         try {
-    		sslCtx = SslManager.getSslContext();
+
+            if(instance.getPort() == Constants.HTTPS_PORT)
+                sslCtx = SslManager.getSslContext();
+
             ServerBootstrap b = new ServerBootstrap();
             b.option(ChannelOption.SO_BACKLOG, 1024);
             b.group(Constants.bossGroup, Constants.workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .childHandler(new RestAPIChannelInitializer(sslCtx));
-
-            ch = b.bind(PORT).sync().channel();
-            LogUtil.info(String.format("RestAPI server started on port: %d", PORT));
+            ch = b.bind(instance.getPort()).sync().channel();
+            LogUtil.info(String.format("RestAPI server started on port: %d", instance.getPort()));
             ch.closeFuture().sync();
         } catch (Exception e) {
 			LogUtil.warning(e.getMessage());
         }
-//        finally {
-//            bossGroup.shutdownGracefully();
-//            workerGroup.shutdownGracefully();
-//        }
     }
     
     public void stop() {

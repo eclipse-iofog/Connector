@@ -45,10 +45,8 @@ public class RestAPIChannelHandler extends ChannelInboundHandlerAdapter {
 	private ByteArrayOutputStream baos;
 	private byte[] content;
 	private final EventExecutorGroup executor;
-//	private final SslContext sslCtx;
 	
-	public RestAPIChannelHandler(EventExecutorGroup executor, SslContext sslCtx) {
-//		this.sslCtx = sslCtx;
+	public RestAPIChannelHandler(EventExecutorGroup executor) {
 		this.executor = executor; 
 	}
 

@@ -42,4 +42,7 @@ public class Constants {
 
     public static EventLoopGroup bossGroup = new NioEventLoopGroup(10);
     public static EventLoopGroup workerGroup = new NioEventLoopGroup(200);
+
+    public static final int HTTPS_PORT = 443;
+    public static final int HTTP_PORT = 8080;
 }

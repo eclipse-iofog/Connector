@@ -40,63 +40,63 @@ public class ComSat {
 	private static SocketsManager socketsManager;
 
 	public static void main(String[] args) {
-		try {
-			Settings.loadSettings();
+        try {
+            Settings.loadSettings();
 
-			if (args == null || args.length == 0) {
-				System.out.println(showHelp());
-			} else if (isAnotherInstanceRunning()) {
-				switch (args[0]) {
-					case "stop":
-						System.out.println("Stopping comsat...");
-						sendCommandlineParameters(args);
-						break;
-					case "start":
-						System.out.println("Comsat is already running.");
-						break;
-				}
-			} else if ("start".equals(args[0])) {
-				ConfigManager.loadConfiguration();
+            if (args == null || args.length == 0) {
+                System.out.println(showHelp());
+            } else if (isAnotherInstanceRunning()) {
+                switch (args[0]) {
+                    case "stop":
+                        System.out.println("Stopping comsat...");
+                        sendCommandlineParameters(args);
+                        break;
+                    case "start":
+                        System.out.println("Comsat is already running.");
+                        break;
+                }
+            } else if ("start".equals(args[0])) {
+                ConfigManager.loadConfiguration();
 
-				RestAPI server = RestAPI.getInstance();
-				server.start();
+                RestAPI server = RestAPI.getInstance(ConfigManager.isDevMode());
+                server.start();
 
-				Thread.sleep(1000);
+                Thread.sleep(1000);
 
-				socketsManager = new SocketsManager();
-				openPorts();
+                socketsManager = new SocketsManager();
+                openPorts();
 
-				synchronized (exitLock) {
-					exitLock.wait();
-				}
+                synchronized (exitLock) {
+                    exitLock.wait();
+                }
 
-				Thread.sleep(200);
+                Thread.sleep(200);
 
-				server.stop();
-				closePorts();
+                server.stop();
+                closePorts();
 
-				Constants.bossGroup.shutdownGracefully();
-				Constants.workerGroup.shutdownGracefully();
+                Constants.bossGroup.shutdownGracefully();
+                Constants.workerGroup.shutdownGracefully();
 
-				System.exit(0);
-			}
-		} catch (Exception ex) {
-			LogUtil.warning(ex.getMessage());
-		}
-	}
+                System.exit(0);
+            }
+        } catch (Exception ex) {
+            LogUtil.warning(ex.getMessage());
+        }
+    }
 
-	private static void openPorts() {
-		for (Entry<String, Configuration> e : ConfigManager.getMappings().entrySet()) {
-			Configuration cfg = e.getValue();
-			socketsManager.openPort(cfg);
-		}
-	}
+    private static void openPorts() {
+        for (Entry<String, Configuration> e : ConfigManager.getMappings().entrySet()) {
+            Configuration cfg = e.getValue();
+            socketsManager.openPort(cfg);
+        }
+    }
 
-	private static void closePorts() {
-		socketsManager.closePorts();
-	}
+    private static void closePorts() {
+        socketsManager.closePorts();
+    }
 
-	@SuppressWarnings("unused")
+    @SuppressWarnings("unused")
 	private static void createHugeConfigFile(int max) throws Exception {
 		JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 		int port = 30000;
