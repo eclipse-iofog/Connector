@@ -90,4 +90,4 @@ jobs:
     - sudo apt-get install sshpass xml-twig-tools
     script:
     - sshpass -p $STAGE_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP "cd /comsat-packaging;
-      package_cloud push iofog/comsat/ubuntu/xenial comsat-test_2.0_all.deb;"
+      package_cloud push iofog/comsat/ubuntu/xenial comsat-test_2.1_all.deb;"
