@@ -84,7 +84,7 @@ jobs:
     #  $PRE_PROD_MACHINE_USERNAME@$PRE_PROD_MACHINE_IP "service comsat stop; apt-get install --only-upgrade comsat-dev -y; service comsat start"; 
     #  else sshpass -p $PROD_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no
     #  $PROD_MACHINE_USERNAME@$PROD_MACHINE_IP "service comsat stop; apt-get install --only-upgrade comsat -y; service comsat start"; fi
-  - stage: package_build
+  - stage: test_package
     if: type IN (push)
     before_install:
     - sudo apt-get install sshpass xml-twig-tools
