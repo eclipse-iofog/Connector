@@ -1,6 +1,4 @@
 #!/bin/sh
 
-PATH_TO_JAR=/usr/bin
-JAR_FILE_NAME=$PATH_TO_JAR/comsat.jar
-cd $PATH_TO_JAR
+JAR_FILE_NAME=/usr/bin/comsat.jar
 java -jar $JAR_FILE_NAME $@

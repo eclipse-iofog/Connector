@@ -8,7 +8,11 @@
 # X-Interactive:     true
 # Short-Description: Start/stop comsat server
 ### END INIT INFO
- 
+
+SERVICE_NAME=comsatd
+PATH_TO_JAR=/usr/bin
+JAR_FILE_NAME=$PATH_TO_JAR/$SERVICE_NAME.jar
+
 if [ "$(id -u)" != '0' ]; then
 	log_failure_msg "comsat must be run as root"
 	exit 1
@@ -20,16 +24,16 @@ case $1 in
 
 	echo "Starting comsat service..."
         cd /usr/bin
-        sudo java -jar comsatd.jar start &
+        sudo java -jar JAR_FILE_NAME.jar start &
     ;;
     stop)
         cd /usr/bin
-        sudo java -jar comsatd.jar stop
+        sudo java -jar JAR_FILE_NAME stop
     ;;
-    restart)
- 	echo "Restarting comsat service..."
-	cd /usr/bin
-   	sudo java -jar comsatd.jar stop
-  	sudo java -jar comsatd.jar start &
-    ;;
+    #restart)
+ 	#echo "Restarting comsat service..."
+	#cd /usr/bin
+   	#sudo java -jar comsatd.jar stop
+  	#sudo java -jar comsatd.jar start &
+    #;;
 esac
