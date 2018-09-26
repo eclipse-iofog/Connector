@@ -34,7 +34,7 @@ public class Settings {
 	}
 
 	public static String getAddress() {
-		return address;
+		return address.concat(":").concat(devMode ? String.valueOf(Constants.HTTP_PORT) : String.valueOf(Constants.HTTPS_PORT));
 	}
 
 	public static boolean isDevMode() {

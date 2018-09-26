@@ -66,7 +66,7 @@ public class InstanceUtils {
 		params.forEach(formData::param);
 
 		ClientBuilder clientBuilder = ClientBuilder.newBuilder();
-		if (isDevMode()){
+		if (!isDevMode()){
 			clientBuilder.sslContext(SslManager.getSSLContext());
 		}
 		javax.ws.rs.client.Client client = clientBuilder.build();

@@ -25,6 +25,9 @@ public class Constants {
     static final String VERSION = "2.0.2";
     static final String API_COMMAND_LINE = "/api/v2/commandline";
 
+    public static final int HTTPS_PORT = 443;
+    public static final int HTTP_PORT = 8080;
+
     public static final String HTTP = "http";
     public static final String HTTPS = "https";
 }
