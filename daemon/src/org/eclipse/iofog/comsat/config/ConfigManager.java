@@ -39,18 +39,12 @@ public class ConfigManager {
     private static Map<String, Configuration> configRepository = new HashMap<>();
     private static Map<String, DirectConnection> directRequestsRepository = new HashMap<>();
     private static int directsCount = 0;
-    private static boolean devMode = true;
-
-    public static boolean isDevMode(){
-    	return devMode;
-	}
     
     public static synchronized void loadConfiguration() {
 
         try {
             JsonReader in = Json.createReader(new FileInputStream(Constants.CONFIG_FILENAME));
             JsonObject configsObject = in.readObject();
-			devMode = configsObject.getBoolean("dev");
             JsonArray mappingsArray = configsObject.getJsonArray("mappings");
 
             for (int i = 0; i < mappingsArray.size(); i++) {

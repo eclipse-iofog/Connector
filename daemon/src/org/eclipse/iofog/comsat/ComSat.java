@@ -31,6 +31,7 @@ import static org.eclipse.iofog.comsat.commandline.CommandLineAction.showHelp;
 import static org.eclipse.iofog.comsat.utils.InstanceUtils.isAnotherInstanceRunning;
 import static org.eclipse.iofog.comsat.utils.InstanceUtils.sendCommandlineParameters;
 
+
 /**
  * Created by Saeid on 6/25/2016.
  */
@@ -58,7 +59,7 @@ public class ComSat {
             } else if ("start".equals(args[0])) {
                 ConfigManager.loadConfiguration();
 
-                RestAPI server = RestAPI.getInstance(ConfigManager.isDevMode());
+                RestAPI server = RestAPI.getInstance(Settings.isDevMode());
                 server.start();
 
                 Thread.sleep(1000);

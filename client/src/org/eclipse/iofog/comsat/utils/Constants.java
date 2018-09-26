@@ -24,4 +24,7 @@ public class Constants {
     static final String LOG_FILENAME = "/var/log/comsat/comsat_client.log";
     static final String VERSION = "2.0.2";
     static final String API_COMMAND_LINE = "/api/v2/commandline";
+
+    public static final String HTTP = "http";
+    public static final String HTTPS = "https";
 }

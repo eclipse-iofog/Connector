@@ -27,6 +27,7 @@ import java.util.Map;
 import static java.lang.String.format;
 import static org.eclipse.iofog.comsat.utils.Constants.API_COMMAND_LINE;
 import static org.eclipse.iofog.comsat.utils.Settings.getAddress;
+import static org.eclipse.iofog.comsat.utils.Settings.isDevMode;
 
 public class InstanceUtils {
 
@@ -36,7 +37,7 @@ public class InstanceUtils {
 			Map<String, String> params = new HashMap<>();
 			params.put("command", "status");
 			params.put("params", "");
-			sendHttpRequest(format("https://%s%s", getAddress(), API_COMMAND_LINE), params);
+			sendHttpRequest(format("%s://%s%s", isDevMode()? Constants.HTTP : Constants.HTTPS, getAddress(), API_COMMAND_LINE), params);
 			result = true;
 		} catch (Exception e) {
 			result = false;
@@ -50,7 +51,7 @@ public class InstanceUtils {
 			Map<String, String> params = new HashMap<>();
 			params.put("command", args[0]);
 			params.put("params", "");
-			Response response = sendHttpRequest(format("https://%s%s", getAddress(), API_COMMAND_LINE), params);
+			Response response = sendHttpRequest(format("%s://%s%s", isDevMode()? Constants.HTTP : Constants.HTTPS, getAddress(), API_COMMAND_LINE), params);
 			String entity = response.readEntity(String.class);
 			JsonObject jsonObject = Json.createReader(new StringReader(entity)).readObject();
 			result = jsonObject.getString("response");
@@ -65,7 +66,11 @@ public class InstanceUtils {
 		Form formData = new Form();
 		params.forEach(formData::param);
 
-		javax.ws.rs.client.Client client = ClientBuilder.newBuilder().sslContext(SslManager.getSSLContext()).build();
+		ClientBuilder clientBuilder = ClientBuilder.newBuilder();
+		if (isDevMode()){
+			clientBuilder.sslContext(SslManager.getSSLContext());
+		}
+		javax.ws.rs.client.Client client = clientBuilder.build();
 		Entity<Form> payload = Entity.form(formData);
 
 		return client.target(url)
