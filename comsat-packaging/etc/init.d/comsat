@@ -23,11 +23,9 @@ case $1 in
 	ln -s /dev/urandom /dev/random
 
 	echo "Starting comsat service..."
-        cd /usr/bin
         sudo java -jar JAR_FILE_NAME.jar start &
     ;;
     stop)
-        cd /usr/bin
         sudo java -jar JAR_FILE_NAME.jar stop
     ;;
 esac

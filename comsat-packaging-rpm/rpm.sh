@@ -12,6 +12,13 @@ else
 fi
 #echo "Check for configs.json"
 
+if [ -f /etc/comsat/comsat.conf ];
+then
+   rm /etc/comsat/comsat_new.conf
+else
+  mv /etc/comsat/comsat_new.conf /etc/comsat/comsat.conf
+fi
+
 mkdir -p /var/log/comsat
 
 chown -R :comsat /etc/comsat
