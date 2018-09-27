@@ -43,7 +43,9 @@ When you put ComSat, anywhere on your network (it can be even public Internet), 
       "exclude": [
         "7001"
       ],
-      "broker":12345
+      "broker":12345,
+      "address":"127.0.0.1",
+      "dev":true
      }' > /etc/comsat/comsat.conf
 
 5.&ensp;Add ComSat to Fog Controller database
