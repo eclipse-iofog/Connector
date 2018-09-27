@@ -78,7 +78,7 @@ jobs:
       package_cloud push iofog/comsat/fedora/24 comsat${DEV}-${VERSION}-1.noarch.rpm;
       package_cloud push iofog/comsat/el/6 comsat${DEV}-${VERSION}-1.noarch.rpm;  
       package_cloud push iofog/comsat/el/7 comsat${DEV}-${VERSION}-1.noarch.rpm"
-    #- if [ "$TRAVIS_BRANCH" == "dev_package" ]; then sshpass -p $PRE_PROD_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no
-    #  $PRE_PROD_MACHINE_USERNAME@$PRE_PROD_MACHINE_IP "service comsat stop; apt-get install --only-upgrade comsat-dev -y; service comsat start"; 
+    - if [ "$TRAVIS_BRANCH" == "dev_package" ]; then sshpass -p $PRE_PROD_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no
+      $PRE_PROD_MACHINE_USERNAME@$PRE_PROD_MACHINE_IP "service comsat stop; apt-get install --only-upgrade comsat-dev -y; service comsat start"; 
     #  else sshpass -p $PROD_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no
     #  $PROD_MACHINE_USERNAME@$PROD_MACHINE_IP "service comsat stop; apt-get install --only-upgrade comsat -y; service comsat start"; fi

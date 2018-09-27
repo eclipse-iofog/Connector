@@ -45,4 +45,7 @@ public class Constants {
 
     public static final int HTTPS_PORT = 443;
     public static final int HTTP_PORT = 8080;
+
+    public static final String HTTP = "http";
+    public static final String HTTPS = "https";
 }

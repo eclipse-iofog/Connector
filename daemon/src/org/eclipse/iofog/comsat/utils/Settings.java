@@ -26,11 +26,13 @@ public class Settings {
 	private static final Map<Integer, Boolean> validPorts = new HashMap<>();
 	private static int brokerPort;
 	private static String address;
+	private static boolean devMode;
 	
 	public static void loadSettings() throws Exception {
 			JsonObject settings = Json.createReader(new FileInputStream(Constants.SETTINGS_FILENAME)).readObject();
 			brokerPort = getValue(settings::getInt, "broker");
 			address = getValue(settings::getString, "address");
+			devMode = getValue(settings::getBoolean, "dev");
 			JsonArray ports = getValue(settings::getJsonArray, "ports");
 			validatePorts(ports);
 			JsonArray excludePorts = getValue(settings::getJsonArray, "exclude");
@@ -113,6 +115,10 @@ public class Settings {
 	}
 
 	public static String getAddress() {
-		return address;
+		return address.concat(":").concat(devMode ? String.valueOf(Constants.HTTP_PORT) : String.valueOf(Constants.HTTPS_PORT));
+	}
+
+	public static boolean isDevMode(){
+		return devMode;
 	}
 }

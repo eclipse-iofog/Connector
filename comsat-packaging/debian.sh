@@ -11,10 +11,18 @@ else
   mv /etc/comsat/configs_new.json /etc/comsat/configs.json
 fi
 
+if [ -f /etc/comsat/comsat.conf ];
+then
+   rm /etc/comsat/comsat_new.conf
+else
+  mv /etc/comsat/comsat_new.conf /etc/comsat/comsat.conf
+fi
+
 mkdir -p /var/log/comsat
 
 chown -R :comsat /etc/comsat
 chown -R :comsat /var/log/comsat
+
 
 chmod 774 -R /etc/comsat
 chmod 774 -R /var/log/comsat
