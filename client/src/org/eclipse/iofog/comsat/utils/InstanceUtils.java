@@ -21,8 +21,10 @@ import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.StringReader;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static org.eclipse.iofog.comsat.utils.Constants.API_COMMAND_LINE;
@@ -36,7 +38,10 @@ public class InstanceUtils {
 			Map<String, String> params = new HashMap<>();
 			params.put("command", "status");
 			params.put("params", "");
-			sendHttpRequest(format("%s://%s%s", isDevMode()? Constants.HTTP : Constants.HTTPS, getAddress(), API_COMMAND_LINE), params);
+			sendHttpRequest(format("%s://%s%s", isDevMode()
+					? Constants.HTTP
+					: Constants.HTTPS, getAddress(),
+					API_COMMAND_LINE), params);
 			result = true;
 		} catch (Exception e) {
 			result = false;
@@ -49,8 +54,17 @@ public class InstanceUtils {
 		try {
 			Map<String, String> params = new HashMap<>();
 			params.put("command", args[0]);
-			params.put("params", "");
-			Response response = sendHttpRequest(format("%s://%s%s", isDevMode()? Constants.HTTP : Constants.HTTPS, getAddress(), API_COMMAND_LINE), params);
+			String queryParameters = args.length > 1
+					? Arrays.asList(args)
+						.subList(1, args.length)
+						.stream()
+						.collect(Collectors.joining(" "))
+					: "";
+			params.put("params", queryParameters);
+			Response response = sendHttpRequest(format("%s://%s%s", isDevMode()
+					? Constants.HTTP
+					: Constants.HTTPS, getAddress(),
+					API_COMMAND_LINE), params);
 			String entity = response.readEntity(String.class);
 			JsonObject jsonObject = Json.createReader(new StringReader(entity)).readObject();
 			result = jsonObject.getString("response");

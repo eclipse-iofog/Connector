@@ -21,9 +21,14 @@ import org.eclipse.iofog.comsat.utils.LogUtil;
 import javax.json.Json;
 import javax.json.JsonObject;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.stream.IntStream;
+
+import static java.util.stream.Collectors.toMap;
 
 public class CommandLineHandler implements Callable<Object> {
 
@@ -61,14 +66,15 @@ public class CommandLineHandler implements Callable<Object> {
 		try {
 			Map<String, List<String>> parameters = decoder.parameters();
 			
-			if (!parameters.containsKey("command"))
-				throw new Exception("Invalid command line parameters");
-			
 			String command = parameters.get("command").get(0);
-			String params = null;
-			if (parameters.containsKey("params"))
-				params = parameters.get("params").get(0);
-			
+			Map<String, String> params = new HashMap<>();
+			if (parameters.containsKey("params")) {
+				List<String> paramList = Arrays.asList(parameters.get("params").get(0).split(" "));
+				params = IntStream.range(1, paramList.size())
+						.boxed()
+						.collect(toMap(i -> paramList.get(i - 1), paramList::get));
+			}
+
 			CommandLineParser parser = new CommandLineParser();
 			responseJson = Json.createObjectBuilder()
 					.add("response", parser.parse(command, params))
@@ -77,11 +83,11 @@ public class CommandLineHandler implements Callable<Object> {
 		} catch (Exception e) {
 			responseJson = Json.createObjectBuilder()
 					.add("status", "failed")
-					.add("error", "Error parsing mapping!")
+					.add("error", "Error parsing command line arguments!")
 					.add("errormessage", e.getMessage())
 					.add("timestamp", System.currentTimeMillis())
 					.build();
-			LogUtil.warning("Error parsing mapping : " + e.getMessage());
+			LogUtil.warning("Error parsing command line arguments : " + e.getMessage());
 		}
 		
 		String responseString = responseJson.toString();

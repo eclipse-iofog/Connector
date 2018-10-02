@@ -13,10 +13,9 @@
 
 package org.eclipse.iofog.comsat.utils;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
+import javax.json.*;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -27,16 +26,76 @@ public class Settings {
 	private static int brokerPort;
 	private static String address;
 	private static boolean devMode;
+
+	public enum Setting {
+		BROKER_PORT("broker") {
+			@Override
+			public void loadSetting(JsonObject settings) throws Exception {
+				brokerPort = getValue(settings::getInt, getName());
+			}
+		},
+		PORTS("ports") {
+			@Override
+			public void loadSetting(JsonObject settings) throws Exception {
+				JsonArray ports = getValue(settings::getJsonArray, getName());
+				validatePorts(ports);
+			}
+		},
+		EXCLUDED_PORTS("exclude") {
+			@Override
+			public void loadSetting(JsonObject settings) throws Exception {
+				JsonArray excludePorts = getValue(settings::getJsonArray, getName());
+				validateExcludePorts(excludePorts);
+			}
+		},
+		ADDRESS("address") {
+			@Override
+			public void loadSetting(JsonObject settings) throws Exception {
+				address = getValue(settings::getString, getName());
+			}
+		},
+		DEV_MODE("dev") {
+			@Override
+			public void loadSetting(JsonObject settings) throws Exception {
+				devMode = getValue(settings::getBoolean, getName());
+			}
+		};
+
+		private final String name;
+
+		Setting(String name) {
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public abstract void loadSetting(JsonObject settings) throws Exception;
+	}
 	
 	public static void loadSettings() throws Exception {
 			JsonObject settings = Json.createReader(new FileInputStream(Constants.SETTINGS_FILENAME)).readObject();
-			brokerPort = getValue(settings::getInt, "broker");
-			address = getValue(settings::getString, "address");
-			devMode = getValue(settings::getBoolean, "dev");
-			JsonArray ports = getValue(settings::getJsonArray, "ports");
-			validatePorts(ports);
-			JsonArray excludePorts = getValue(settings::getJsonArray, "exclude");
-			validateExcludePorts(excludePorts);
+			Setting.BROKER_PORT.loadSetting(settings);
+			Setting.ADDRESS.loadSetting(settings);
+			Setting.DEV_MODE.loadSetting(settings);
+			Setting.PORTS.loadSetting(settings);
+			Setting.EXCLUDED_PORTS.loadSetting(settings);
+	}
+
+	public static void saveSettings(String setting, JsonValue value) throws Exception {
+		JsonObject settings = Json.createReader(new FileInputStream(Constants.SETTINGS_FILENAME)).readObject();
+		final JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+		for (Map.Entry<String, JsonValue> entry : settings.entrySet()) {
+			if (entry.getKey().equals(setting)) {
+				jsonObjectBuilder.add(setting, value);
+			} else {
+				jsonObjectBuilder.add(entry.getKey(), entry.getValue());
+			}
+
+		}
+		JsonObject newSettings = jsonObjectBuilder.build();
+		Json.createWriter(new FileOutputStream(Constants.SETTINGS_FILENAME)).writeObject(newSettings);
 	}
 
 	private static <T> T getValue(Function<String, T> extractor, String key) throws InvalidSettingException {

@@ -13,9 +13,11 @@
 
 package org.eclipse.iofog.comsat.commandline;
 
+import java.util.Map;
+
 public class CommandLineParser {
 
-	public String parse(String command, String params) throws Exception {
+	public String parse(String command, Map<String, String> params) throws Exception {
 		return CommandLineAction.getActionByKey(command).perform(params);
 	}
 }
