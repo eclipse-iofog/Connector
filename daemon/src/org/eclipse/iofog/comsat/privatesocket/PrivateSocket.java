@@ -13,17 +13,16 @@
 
 package org.eclipse.iofog.comsat.privatesocket;
 
-import java.util.*;
-
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.Channel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.ssl.SslContext;
 import org.eclipse.iofog.comsat.utils.Constants;
 import org.eclipse.iofog.comsat.utils.LogUtil;
 import org.eclipse.iofog.comsat.utils.Settings;
 import org.eclipse.iofog.comsat.utils.SslManager;
 
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.ssl.SslContext;
+import java.util.*;
 
 public class PrivateSocket implements Runnable {
 
@@ -53,10 +52,12 @@ public class PrivateSocket implements Runnable {
 				b.group(Constants.bossGroup, Constants.workerGroup)
 					.channel(NioServerSocketChannel.class);
 				SslContext sslCtx = null;
-				try {
-					sslCtx = SslManager.getSslContext();
-				} catch (Exception e) {
-					e.printStackTrace();
+				if (!Settings.isDevMode()) {
+					try {
+						sslCtx = SslManager.getSslContext();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 				PrivateSocketInitializer channelInitializer = new PrivateSocketInitializer(sslCtx, this);
 				b.childHandler(channelInitializer);

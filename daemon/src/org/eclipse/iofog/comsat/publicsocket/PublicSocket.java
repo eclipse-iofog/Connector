@@ -39,11 +39,13 @@ public class PublicSocket implements Runnable {
 
 	public void run() {
 		SslContext sslCtx = null;
-		try {
-			sslCtx = SslManager.getSslContext();
-		} catch (Exception e) {
-			System.out.println("Error reading certificates");
-			return;
+		if (!Settings.isDevMode()) {
+			try {
+				sslCtx = SslManager.getSslContext();
+			} catch (Exception e) {
+				System.out.println("Error reading certificates");
+				return;
+			}
 		}
 		while (!stopListening) {
 			try {
