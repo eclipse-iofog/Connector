@@ -19,7 +19,6 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.eclipse.iofog.comsat.utils.InstanceUtils.isAnotherInstanceRunning;
-import static org.eclipse.iofog.comsat.utils.InstanceUtils.sendCommandlineParameters;
 
 public enum CommandLineAction {
 
@@ -77,17 +76,6 @@ public enum CommandLineAction {
 		public String perform(String[] args) {
 			return CommandLineAction.showVersion();
 		}
-	},
-	CONFIG_ACTION {
-		@Override
-		public List<String> getKeys() {
-			return singletonList("config");
-		}
-
-		@Override
-		public String perform(String[] args) {
-			return sendCommandlineParameters(args);
-		}
 	};
 
 	public abstract List<String> getKeys();
@@ -116,8 +104,6 @@ public enum CommandLineAction {
 				+ "                                         license information\n"
 				+ "status                                   Display current status information\n"
 				+ "                                         about the software\n"
-				+ "config           -dev <true/false>       Enable/disable develop mode\n"
-				+ "                      <on/off>           \n"
 				+ "Report bugs to: edgemaster@iofog.org\n" + "ioFog home page: http://iofog.org\n"
 				+ "For users with Eclipse accounts, report bugs to: https://bugs.eclipse.org/bugs/enter_bug.cgi?product=iofog");
 	}
