@@ -15,9 +15,7 @@ package org.eclipse.iofog.comsat.commandline;
 
 import org.eclipse.iofog.comsat.ComSat;
 import org.eclipse.iofog.comsat.utils.Constants;
-import org.eclipse.iofog.comsat.utils.Settings;
 
-import javax.json.JsonValue;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -73,25 +71,6 @@ public enum CommandLineAction {
 		public String perform(Map<String, String> params) {
 			return showVersion();
 		}
-	},
-	CONFIG_ACTION {
-		@Override
-		public List<String> getKeys() {
-			return singletonList("config");
-		}
-
-		@Override
-		public String perform(Map<String, String> params) throws Exception {
-
-			String result = showHelp();
-			for (Map.Entry<String, String> entry : params.entrySet()) {
-				switch(entry.getKey()) {
-					case "-dev":
-						result = developModeAction(params);
-				}
-			}
-			return result;
-		}
 	};
 
 	public abstract List<String> getKeys();
@@ -103,28 +82,6 @@ public enum CommandLineAction {
 				.filter(action -> action.getKeys().contains(cmdKey))
 				.findAny()
 				.orElse(HELP_ACTION);
-	}
-
-	private static String developModeAction(Map<String, String> params) throws Exception {
-		String result;
-		String val = params.get("-dev");
-		switch(val) {
-			case "true":
-			case "on":
-				Settings.saveSettings(Settings.Setting.DEV_MODE.getName(), JsonValue.TRUE);
-				Settings.loadSettings();
-				result = "Develop mode has been enabled. Please restart comsat.";
-				break;
-			case "false":
-			case "off":
-				Settings.saveSettings(Settings.Setting.DEV_MODE.getName(), JsonValue.FALSE);
-				Settings.loadSettings();
-				result = "Develop mode has been disabled. Please restart comsat.";
-				break;
-			default:
-				result = "Develop mode has not been changed. Make sure config arguments are correct.";
-		}
-		return result;
 	}
 
 	public static String showHelp() {
@@ -142,8 +99,6 @@ public enum CommandLineAction {
 				+ "                                         license information\n"
 				+ "status                                   Display current status information\n"
 				+ "                                         about the software\n"
-				+ "config           -dev <true/false>       Enable/disable develop mode\n"
-				+ "                      <on/off>           \n"
 				+ "Report bugs to: edgemaster@iofog.org\n" + "ioFog home page: http://iofog.org\n"
 				+ "For users with Eclipse accounts, report bugs to: https://bugs.eclipse.org/bugs/enter_bug.cgi?product=iofog");
 	}
