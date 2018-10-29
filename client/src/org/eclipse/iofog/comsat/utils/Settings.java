@@ -11,13 +11,13 @@
  *
  */
 
-package org.eclipse.iofog.comsat.utils;
+package org.eclipse.iofog.connector.utils;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 import java.io.FileInputStream;
 
-import static org.eclipse.iofog.comsat.utils.Constants.SETTINGS_FILENAME;
+import static org.eclipse.iofog.connector.utils.Constants.SETTINGS_FILENAME;
 
 public class Settings {
 	private static String address;

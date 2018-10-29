@@ -11,17 +11,17 @@
  *
  */
 
-package org.eclipse.iofog.comsat.utils;
+package org.eclipse.iofog.connector.utils;
 
 /**
  * Created by saeid on 6/27/16.
  */
 public class Constants {
 
-    static final String SETTINGS_FILENAME = "/etc/comsat/comsat.conf";
-    static final String CERTITICATE_FILENAME = "/etc/comsat/server-cert.pem";
-    static final String KEY_FILENAME = "/etc/comsat/server-key.pem";
-    static final String LOG_FILENAME = "/var/log/comsat/comsat_client.log";
+    static final String SETTINGS_FILENAME = "/etc/connector/connector.conf";
+    static final String CERTITICATE_FILENAME = "/etc/connector/server-cert.pem";
+    static final String KEY_FILENAME = "/etc/connector/server-key.pem";
+    static final String LOG_FILENAME = "/var/log/connector/connector_client.log";
     static final String VERSION = "2.0.2";
     static final String API_COMMAND_LINE = "/api/v2/commandline";
 

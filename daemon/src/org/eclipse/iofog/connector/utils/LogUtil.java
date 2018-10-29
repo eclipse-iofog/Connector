@@ -20,7 +20,7 @@ public class LogUtil {
 	private static Logger logger;
 	
 	static { 
-		logger = Logger.getLogger("connector_client");
+		logger = Logger.getLogger("connector");
 		FileHandler fh;  
 		try {
 			fh = new FileHandler(Constants.LOG_FILENAME);   

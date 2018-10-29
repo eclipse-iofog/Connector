@@ -11,14 +11,17 @@
  *
  */
 
-package org.eclipse.iofog.connector.utils;
+package org.eclipse.iofog.connector.commandline;
+
+import org.eclipse.iofog.connector.Connector;
+import org.eclipse.iofog.connector.utils.Constants;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static org.eclipse.iofog.connector.utils.InstanceUtils.isAnotherInstanceRunning;
 
 public enum CommandLineAction {
 
@@ -29,19 +32,11 @@ public enum CommandLineAction {
 		}
 
 		@Override
-		public String perform(String[] args) {
-			return isAnotherInstanceRunning() ? "Enter \"service iofog-connector stop\"" : "Connector is already stopped.";
-		}
-	},
-	START_ACTION {
-		@Override
-		public List<String> getKeys() {
-			return singletonList("start");
-		}
-
-		@Override
-		public String perform(String[] args) {
-			return isAnotherInstanceRunning() ? "Connector is already running." : "Enter \"service connector start\"";
+		public String perform(Map<String, String> params) {
+			synchronized (Connector.exitLock) {
+				Connector.exitLock.notifyAll();
+			}
+			return "Connector stopped... :)";
 		}
 	},
 	STATUS_ACTION {
@@ -51,8 +46,8 @@ public enum CommandLineAction {
 		}
 
 		@Override
-		public String perform(String[] args) {
-			return isAnotherInstanceRunning() ? "Connector is up and running." : "Connector is stopped.";
+		public String perform(Map<String, String> params) {
+			return "Connector is up and running.";
 		}
 	},
 	HELP_ACTION {
@@ -62,8 +57,8 @@ public enum CommandLineAction {
 		}
 
 		@Override
-		public String perform(String[] args) {
-			return CommandLineAction.showHelp();
+		public String perform(Map<String, String> params) {
+			return showHelp();
 		}
 	},
 	VERSION_ACTION {
@@ -73,14 +68,14 @@ public enum CommandLineAction {
 		}
 
 		@Override
-		public String perform(String[] args) {
-			return CommandLineAction.showVersion();
+		public String perform(Map<String, String> params) {
+			return showVersion();
 		}
 	};
 
 	public abstract List<String> getKeys();
 
-	public abstract String perform(String[] args);
+	public abstract String perform(Map<String, String> params) throws Exception;
 
 	public static CommandLineAction getActionByKey(String cmdKey) {
 		return Arrays.stream(values())
@@ -89,7 +84,7 @@ public enum CommandLineAction {
 				.orElse(HELP_ACTION);
 	}
 
-	private static String showHelp() {
+	public static String showHelp() {
 
 		return ("Usage: iofog-connector [OPTION]\n\n"
 				+ "Option           GNU long option         Meaning\n"
@@ -108,7 +103,7 @@ public enum CommandLineAction {
 				+ "For users with Eclipse accounts, report bugs to: https://bugs.eclipse.org/bugs/enter_bug.cgi?product=iofog");
 	}
 
-	private static String showVersion() {
+	public static String showVersion() {
 		return "Connector " + Constants.VERSION +
 				"\nCopyright (C) 2018 Edgeworx, Inc." +
 				"\nEclipse ioFog is provided under the Eclipse Public License (EPL2)" +

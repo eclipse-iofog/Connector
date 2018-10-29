@@ -14,9 +14,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.eclipse.iofog</groupId>
-    <artifactId>comsat</artifactId>
+    <artifactId>connector</artifactId>
     <version>2.0.3</version>
-    <name>comsat</name>
+    <name>connector</name>
     <packaging>pom</packaging>
 
     <modules>

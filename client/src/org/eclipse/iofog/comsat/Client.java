@@ -11,11 +11,11 @@
  *
  */
 
-package org.eclipse.iofog.comsat;
+package org.eclipse.iofog.connector;
 
-import org.eclipse.iofog.comsat.utils.CommandLineAction;
-import org.eclipse.iofog.comsat.utils.LogUtil;
-import org.eclipse.iofog.comsat.utils.Settings;
+import org.eclipse.iofog.connector.utils.CommandLineAction;
+import org.eclipse.iofog.connector.utils.LogUtil;
+import org.eclipse.iofog.connector.utils.Settings;
 
 import java.text.ParseException;
 

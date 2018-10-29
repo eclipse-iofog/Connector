@@ -27,14 +27,14 @@ jobs:
     script:
     - mvn clean install
     - sshpass -p $DEV_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $DEV_MACHINE_USERNAME@$DEV_MACHINE_IP 
-      "service comsat stop; rm -rf /usr/bin/comsatd_bckp.jar /usr/bin/comsat_bckp.jar; mv /usr/bin/comsatd.jar
-      /usr/bin/comsatd_bckp.jar; mv /usr/bin/comsat.jar /usr/bin/comsat_bckp.jar"
-    - sshpass -p $DEV_MACHINE_PASSWORD scp daemon/target/comsat-daemon-jar-with-dependencies.jar
-      $DEV_MACHINE_USERNAME@$DEV_MACHINE_IP:/usr/bin/comsatd.jar
-    - sshpass -p $DEV_MACHINE_PASSWORD scp client/target/comsat-client-jar-with-dependencies.jar
-      $DEV_MACHINE_USERNAME@$DEV_MACHINE_IP:/usr/bin/comsat.jar
+      "service iofog-connector stop; rm -rf /usr/bin/connectord_bckp.jar /usr/bin/connector_bckp.jar; mv /usr/bin/connectord.jar
+      /usr/bin/connectord_bckp.jar; mv /usr/bin/connector.jar /usr/bin/connector_bckp.jar"
+    - sshpass -p $DEV_MACHINE_PASSWORD scp daemon/target/connector-daemon-jar-with-dependencies.jar
+      $DEV_MACHINE_USERNAME@$DEV_MACHINE_IP:/usr/bin/connectord.jar
+    - sshpass -p $DEV_MACHINE_PASSWORD scp client/target/connector-client-jar-with-dependencies.jar
+      $DEV_MACHINE_USERNAME@$DEV_MACHINE_IP:/usr/bin/connector.jar
     - sshpass -p $DEV_MACHINE_PASSWORD ssh $DEV_MACHINE_USERNAME@$DEV_MACHINE_IP
-      "service comsat start"
+      "service iofog-connector start"
   - stage: package_build
     if: type IN (push)
     before_install:
@@ -44,46 +44,46 @@ jobs:
     - export VERSION=`xml_grep --cond='project/version' pom.xml --text_only`
     - mvn clean install
     - sshpass -p $STAGE_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no
-      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP "rm -rf /comsat-packaging-rpm/*; rm -rf /comsat-packaging/*;"
-    - sshpass -p $STAGE_MACHINE_PASSWORD scp -o StrictHostKeyChecking=no -r comsat-packaging-rpm/*
-      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/comsat-packaging-rpm/
-    - sshpass -p $STAGE_MACHINE_PASSWORD scp -r comsat-packaging/*
-      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/comsat-packaging/
-    - sshpass -p $STAGE_MACHINE_PASSWORD scp client/target/comsat-client-jar-with-dependencies.jar
-      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/comsat-packaging/usr/bin/comsat.jar
-    - sshpass -p $STAGE_MACHINE_PASSWORD scp daemon/target/comsat-daemon-jar-with-dependencies.jar
-      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/comsat-packaging/usr/bin/comsatd.jar
-    - sshpass -p $STAGE_MACHINE_PASSWORD scp client/target/comsat-client-jar-with-dependencies.jar
-      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/comsat-packaging-rpm/usr/bin/comsat.jar
-    - sshpass -p $STAGE_MACHINE_PASSWORD scp daemon/target/comsat-daemon-jar-with-dependencies.jar
-      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/comsat-packaging-rpm/usr/bin/comsatd.jar
-    - sshpass -p $STAGE_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP "cd /comsat-packaging; fpm -s dir -t deb -n \"comsat${DEV}\" -v $VERSION -a all --deb-no-default-config-files --after-install debian.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade debian.sh etc usr;
-      package_cloud push iofog/comsat/ubuntu/precise comsat${DEV}_${VERSION}_all.deb; 
-      package_cloud push iofog/comsat/ubuntu/trusty comsat${DEV}_${VERSION}_all.deb; 
-      package_cloud push iofog/comsat/ubuntu/utopic comsat${DEV}_${VERSION}_all.deb; 
-      package_cloud push iofog/comsat/ubuntu/vivid comsat${DEV}_${VERSION}_all.deb; 
-      package_cloud push iofog/comsat/ubuntu/wily comsat${DEV}_${VERSION}_all.deb; 
-      package_cloud push iofog/comsat/ubuntu/xenial comsat${DEV}_${VERSION}_all.deb; 
-      package_cloud push iofog/comsat/debian/wheezy comsat${DEV}_${VERSION}_all.deb; 
-      package_cloud push iofog/comsat/debian/jessie comsat${DEV}_${VERSION}_all.deb; 
-      package_cloud push iofog/comsat/debian/stretch comsat${DEV}_${VERSION}_all.deb; 
-      package_cloud push iofog/comsat/debian/buster comsat${DEV}_${VERSION}_all.deb; 
-      package_cloud push iofog/comsat/raspbian/wheezy comsat${DEV}_${VERSION}_all.deb; 
-      package_cloud push iofog/comsat/raspbian/jessie comsat${DEV}_${VERSION}_all.deb; 
-      package_cloud push iofog/comsat/raspbian/stretch comsat${DEV}_${VERSION}_all.deb; 
-      package_cloud push iofog/comsat/raspbian/buster comsat${DEV}_${VERSION}_all.deb; 
-      cd /comsat-packaging-rpm; fpm -s dir -t rpm -n \"comsat${DEV}\" -v $VERSION -a all --rpm-os 'linux' --after-install rpm.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade rpm.sh etc usr; 
-      package_cloud push iofog/comsat/fedora/22 comsat${DEV}-${VERSION}-1.noarch.rpm; 
-      package_cloud push iofog/comsat/fedora/23 comsat${DEV}-${VERSION}-1.noarch.rpm; 
-      package_cloud push iofog/comsat/fedora/24 comsat${DEV}-${VERSION}-1.noarch.rpm;
-      package_cloud push iofog/comsat/el/6 comsat${DEV}-${VERSION}-1.noarch.rpm;  
-      package_cloud push iofog/comsat/el/7 comsat${DEV}-${VERSION}-1.noarch.rpm"
+      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP "rm -rf /connector-packaging-rpm/*; rm -rf /connector-packaging/*;"
+    - sshpass -p $STAGE_MACHINE_PASSWORD scp -o StrictHostKeyChecking=no -r connector-packaging-rpm/*
+      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/connector-packaging-rpm/
+    - sshpass -p $STAGE_MACHINE_PASSWORD scp -r connector-packaging/*
+      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/connector-packaging/
+    - sshpass -p $STAGE_MACHINE_PASSWORD scp client/target/connector-client-jar-with-dependencies.jar
+      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/connector-packaging/usr/bin/connector.jar
+    - sshpass -p $STAGE_MACHINE_PASSWORD scp daemon/target/connector-daemon-jar-with-dependencies.jar
+      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/connector-packaging/usr/bin/connectord.jar
+    - sshpass -p $STAGE_MACHINE_PASSWORD scp client/target/connector-client-jar-with-dependencies.jar
+      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/connector-packaging-rpm/usr/bin/connector.jar
+    - sshpass -p $STAGE_MACHINE_PASSWORD scp daemon/target/connector-daemon-jar-with-dependencies.jar
+      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/connector-packaging-rpm/usr/bin/connectord.jar
+    - sshpass -p $STAGE_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP "cd /connector-packaging; fpm -s dir -t deb -n \"connector${DEV}\" -v $VERSION -a all --deb-no-default-config-files --after-install debian.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade debian.sh etc usr;
+      package_cloud push iofog/connector/ubuntu/precise connector${DEV}_${VERSION}_all.deb;
+      package_cloud push iofog/connector/ubuntu/trusty connector${DEV}_${VERSION}_all.deb;
+      package_cloud push iofog/connector/ubuntu/utopic connector${DEV}_${VERSION}_all.deb;
+      package_cloud push iofog/connector/ubuntu/vivid connector${DEV}_${VERSION}_all.deb;
+      package_cloud push iofog/connector/ubuntu/wily connector${DEV}_${VERSION}_all.deb;
+      package_cloud push iofog/connector/ubuntu/xenial connector${DEV}_${VERSION}_all.deb;
+      package_cloud push iofog/connector/debian/wheezy connector${DEV}_${VERSION}_all.deb;
+      package_cloud push iofog/connector/debian/jessie connector${DEV}_${VERSION}_all.deb;
+      package_cloud push iofog/connector/debian/stretch connector${DEV}_${VERSION}_all.deb;
+      package_cloud push iofog/connector/debian/buster connector${DEV}_${VERSION}_all.deb;
+      package_cloud push iofog/connector/raspbian/wheezy connector${DEV}_${VERSION}_all.deb;
+      package_cloud push iofog/connector/raspbian/jessie connector${DEV}_${VERSION}_all.deb;
+      package_cloud push iofog/connector/raspbian/stretch connector${DEV}_${VERSION}_all.deb;
+      package_cloud push iofog/connector/raspbian/buster connector${DEV}_${VERSION}_all.deb;
+      cd /connector-packaging-rpm; fpm -s dir -t rpm -n \"connector${DEV}\" -v $VERSION -a all --rpm-os 'linux' --after-install rpm.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade rpm.sh etc usr;
+      package_cloud push iofog/connector/fedora/22 connector${DEV}-${VERSION}-1.noarch.rpm;
+      package_cloud push iofog/connector/fedora/23 connector${DEV}-${VERSION}-1.noarch.rpm;
+      package_cloud push iofog/connector/fedora/24 connector${DEV}-${VERSION}-1.noarch.rpm;
+      package_cloud push iofog/connector/el/6 connector${DEV}-${VERSION}-1.noarch.rpm;
+      package_cloud push iofog/connector/el/7 connector${DEV}-${VERSION}-1.noarch.rpm"
     - if [ "$TRAVIS_BRANCH" == "dev_package" ]; then sshpass -p $PRE_PROD_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no
-      $PRE_PROD_MACHINE_USERNAME@$PRE_PROD_MACHINE_IP "service comsat stop; apt-get install --only-upgrade comsat-dev -y; service comsat start"; 
+      $PRE_PROD_MACHINE_USERNAME@$PRE_PROD_MACHINE_IP "service iofog-connector stop; apt-get install --only-upgrade iofog-connector-dev -y; service iofog-connector start";
       else sshpass -p $PROD_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no
-      $PROD_MACHINE_USERNAME@$PROD1_MACHINE_IP "service comsat stop; apt-get install --only-upgrade comsat -y; service comsat start";
+      $PROD_MACHINE_USERNAME@$PROD1_MACHINE_IP "service iofog-connector stop; apt-get install --only-upgrade iofog-connector -y; service iofog-connector start";
       sshpass -p $PROD_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no
-      $PROD_MACHINE_USERNAME@$PROD2_MACHINE_IP "service comsat stop; apt-get install --only-upgrade comsat -y; service comsat start";
+      $PROD_MACHINE_USERNAME@$PROD2_MACHINE_IP "service iofog-connector stop; apt-get install --only-upgrade iofog-connector -y; service iofog-connector start";
       sshpass -p $PROD_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no
-      $PROD_MACHINE_USERNAME@$PROD3_MACHINE_IP "service comsat stop; apt-get install --only-upgrade comsat -y; service comsat start";
+      $PROD_MACHINE_USERNAME@$PROD3_MACHINE_IP "service iofog-connector stop; apt-get install --only-upgrade iofog-connector -y; service iofog-connector start";
       fi
