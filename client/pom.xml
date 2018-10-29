@@ -57,7 +57,7 @@
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
-                            <finalName>connector-client</finalName>
+                            <finalName>iofog-connector-client</finalName>
                         </configuration>
                     </execution>
                 </executions>
