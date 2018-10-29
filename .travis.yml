@@ -1,46 +1,21 @@
 sudo: true
 language: java
 jdk: openjdk8
-notifications:
-  email: false
-  slack:
-    rooms:
-      secure: taYfHvkkrx/6FbL2FURMvYuu2vUB9thEK2qIo4DZPOzlwdn5XpqzAFmMXD1kCqDLTPGnhsGknbqkx+zMWIjLg3RCsxNm+yPik98QO9NCMu9L+gjEmxt31m/WGfYyCQ0Gf1/cxvxtrC/TK5T1GzF6XKsRExmDctOexwWJIBnFLP77LbWhKKe3F8DAWtzs8NwEsNGgovbhnqT3RMcymfmdWYyel2cheev79+G1EX0tPar76cAb3fBBHIi+TDeek5BEhcofoFFyBJDFQhTVZ/rImhCT8ilNAA9Eq5JWc2MY9UdYBclIVsNPXmqc9XQyU9LcQu8HjfO/afgZvG727kJCOU0UpM3u8LWHx/TxUqXQ7hspR5V0FdDxe9bvARzyMDtmgjWUracG45E9uwtANYSpv4iC+LchAoF9/9ACDN13ubAYBlS6WB6NbwlH2OwVf4IAsu52WCOntT/lvECnDB7Lo01hEu8cd8D64So6ftmokdehfGdhzLf6Ngg0YzfD3nS1ULmwKz0ytHeSJRSbXUdP/1XoEbp1/RaJVMauEoRDh34GEORh5brsBZ5f66C/O4caiYbpgrRLUMGDxHqD5ujKg0U809KG9suJf26eoErjzUDHRsQOg/6PxvpCPZBmi34hAh39W17jiea/C0DLTFdMEaCj7dqfwihr+pr0dtZlox0=
-    on_success: change
-    on_failure: always
 stages:
 - name: build
-  if: branch IN (develop, master, dev_package)
-- name: dev_build
-  if: branch = develop
+  if: branch = sergey/feature-renaming-comsat-to-connector
 - name: package_build
-  if: branch IN (master, dev_package)
+  if: branch = sergey/feature-renaming-comsat-to-connector
 
 jobs:
   include:
   - stage: build
     if: type IN (pull_request)
-  - stage: dev_build
-    if: type IN (push)
-    before_install:
-    - sudo apt-get install sshpass
-    script:
-    - mvn clean install
-    - sshpass -p $DEV_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $DEV_MACHINE_USERNAME@$DEV_MACHINE_IP 
-      "service iofog-connector stop; rm -rf /usr/bin/connectord_bckp.jar /usr/bin/connector_bckp.jar; mv /usr/bin/connectord.jar
-      /usr/bin/connectord_bckp.jar; mv /usr/bin/connector.jar /usr/bin/connector_bckp.jar"
-    - sshpass -p $DEV_MACHINE_PASSWORD scp daemon/target/connector-daemon-jar-with-dependencies.jar
-      $DEV_MACHINE_USERNAME@$DEV_MACHINE_IP:/usr/bin/connectord.jar
-    - sshpass -p $DEV_MACHINE_PASSWORD scp client/target/connector-client-jar-with-dependencies.jar
-      $DEV_MACHINE_USERNAME@$DEV_MACHINE_IP:/usr/bin/connector.jar
-    - sshpass -p $DEV_MACHINE_PASSWORD ssh $DEV_MACHINE_USERNAME@$DEV_MACHINE_IP
-      "service iofog-connector start"
   - stage: package_build
     if: type IN (push)
     before_install:
     - sudo apt-get install sshpass xml-twig-tools
     script:
-    - if [ "$TRAVIS_BRANCH" == "dev_package" ]; then export DEV=-dev; fi
     - export VERSION=`xml_grep --cond='project/version' pom.xml --text_only`
     - mvn clean install
     - sshpass -p $STAGE_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no
@@ -78,12 +53,3 @@ jobs:
       package_cloud push iofog/connector/fedora/24 connector${DEV}-${VERSION}-1.noarch.rpm;
       package_cloud push iofog/connector/el/6 connector${DEV}-${VERSION}-1.noarch.rpm;
       package_cloud push iofog/connector/el/7 connector${DEV}-${VERSION}-1.noarch.rpm"
-    - if [ "$TRAVIS_BRANCH" == "dev_package" ]; then sshpass -p $PRE_PROD_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no
-      $PRE_PROD_MACHINE_USERNAME@$PRE_PROD_MACHINE_IP "service iofog-connector stop; apt-get install --only-upgrade iofog-connector-dev -y; service iofog-connector start";
-      else sshpass -p $PROD_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no
-      $PROD_MACHINE_USERNAME@$PROD1_MACHINE_IP "service iofog-connector stop; apt-get install --only-upgrade iofog-connector -y; service iofog-connector start";
-      sshpass -p $PROD_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no
-      $PROD_MACHINE_USERNAME@$PROD2_MACHINE_IP "service iofog-connector stop; apt-get install --only-upgrade iofog-connector -y; service iofog-connector start";
-      sshpass -p $PROD_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no
-      $PROD_MACHINE_USERNAME@$PROD3_MACHINE_IP "service iofog-connector stop; apt-get install --only-upgrade iofog-connector -y; service iofog-connector start";
-      fi
