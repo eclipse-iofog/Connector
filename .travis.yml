@@ -1,6 +1,7 @@
 sudo: true
 language: java
 jdk: openjdk8
+
 stages:
 - name: build
   if: branch = sergey/feature-renaming-connector-to-connector
