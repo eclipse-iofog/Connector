@@ -1,37 +1,37 @@
-**What is ComSat?**
+**What is Connector?**
 
-- Is an internetworking aid for ioFog nodes (short for Communications Satellite)
+- Is an internetworking aid for ioFog nodes
 - Provides “double opt-in” connections for secure IoT connectivity
 
-We call this module "ComSat" because it acts as a virtual communications satellite that ioFog nodes use as a relay point to converse with other nodes.
+We call this module "Connector" because it acts as a virtual connection between ioFog nodes.
 
-ComSat installs on any common version of Linux. It handles the traffic between Fog nodes. You can have as many ComSat instances in a Fog deployment as you want.
+Connector installs on any common version of Linux. It handles the traffic between Fog nodes. You can have as many Connector instances in a Iofog deployment as you want.
 
-When you put ComSat, anywhere on your network (it can be even public Internet), anywhere that is visible to fog nodes, the ComSat facilitates this talk to each other, it facilitates opening a port on public internet to talk to the fog. Thus you can reach microservices remotely, and microservices come in together from different locations.
+When you put Connector, anywhere on your network (it can be even public Internet), anywhere that is visible to fog nodes, the Connector facilitates this talk to each other, it facilitates opening a port on public internet to talk to the fog. Thus you can reach microservices remotely, and microservices come in together from different locations.
 
 
-**ComSat Setup**
+**Connector Setup**
 
-1.&ensp;In order to install ComSat, you need to have Java installed on your machine.
+1.&ensp;In order to install Connector, you need to have Java installed on your machine.
 
      sudo add-apt-repository ppa:webupd8team/java
      sudo apt-get update
      sudo apt-get install oracle-java8-installer
 
-2 &ensp;Install Comsat
+2 &ensp;Install Connector
 
-     curl -s https://packagecloud.io/install/repositories/iofog/comsat/script.deb.sh | sudo bash
-     sudo apt-get install comsat (release version)
+     curl -s https://packagecloud.io/install/repositories/iofog/connector/script.deb.sh | sudo bash
+     sudo apt-get install iofog-connector (release version)
      or
-     sudo apt-get install comsat-dev (developer's version)
+     sudo apt-get install iofog-connector-dev (developer's version)
 	   
-3.&ensp;Setup certificates if needed (After installation there are config.json, server-cert.per and server-key.per files present in the /etc/comsat directory)
+3.&ensp;Setup certificates if needed (After installation there are config.json, server-cert.per and server-key.per files present in the /etc/iofog-connector directory)
 
      - config.json contains the list of existing connections
-     - server-cert.per is a public key that tells that Fog Controller is allowed to ComSat
+     - server-cert.per is a public key that tells that Iofog-Controller is allowed to Connector
      - server-key.per is a private key that has its own identity and uses it to talk to ioFog agent
 
-4.&ensp;Add comsat.conf config file to ComSat
+4.&ensp;Add connector.conf config file to Connector
 
      sudo echo '{
       "ports": [
@@ -43,16 +43,18 @@ When you put ComSat, anywhere on your network (it can be even public Internet), 
       "exclude": [
         "7001"
       ],
-      "broker":12345
-     }' > /etc/comsat/comsat.conf
+      "broker":12345,
+      "address":"127.0.0.1",
+      "dev":true
+     }' > /etc/iofog-connector/iofog-connector.conf
 
-5.&ensp;Add ComSat to Fog Controller database
+5.&ensp;Add Connector to Iofog-Controller database
 
-    fog-controller comsat -add <name> <domain> <publicIP>
+    iofog-controller connector -add <name> <domain> <publicIP>
     
  
 **Logs**
-- Log files are located at '/var/log/comsat'
+- Log files are located at '/var/log/iofog-connector'
 
 **System Requirements (Recommended)**
 - Processor: 64 bit Dual Core or better
@@ -65,12 +67,12 @@ When you put ComSat, anywhere on your network (it can be even public Internet), 
 - 16.04 - Xenial Xerus
 
 
-&ensp;- ComSat Update:
+&ensp;- Connector Update:
 
-        sudo service comsat stop       
-        sudo apt-get install --only-upgrade comsat
-        sudo service comsat start
+        sudo service iofog-connector stop       
+        sudo apt-get install --only-upgrade iofog-connector
+        sudo service iofog-connector start
         or
-        sudo service comsat stop
-        sudo apt-get install --only-upgrade comsat-dev (developer's version)
-        sudo service comsat stop        
+        sudo service iofog-connector stop
+        sudo apt-get install --only-upgrade iofog-connector-dev (developer's version)
+        sudo service iofog-connector stop        

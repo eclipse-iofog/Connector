@@ -18,14 +18,14 @@
 
     <parent>
         <groupId>org.eclipse.iofog</groupId>
-        <artifactId>comsat</artifactId>
-        <version>2.0.3</version>
+        <artifactId>iofog-connector</artifactId>
+        <version>1.0.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>comsat-daemon</artifactId>
+    <artifactId>iofog-connector-daemon</artifactId>
 
     <build>
         <sourceDirectory>src</sourceDirectory>
@@ -51,13 +51,13 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>org.eclipse.iofog.comsat.ComSat</mainClass>
+                                    <mainClass>org.eclipse.iofog.connector.Connector</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
-                            <finalName>comsat-daemon</finalName>
+                            <finalName>iofog-connector-daemon</finalName>
                         </configuration>
                     </execution>
                 </executions>
