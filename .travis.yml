@@ -4,9 +4,9 @@ jdk: openjdk8
 
 stages:
 - name: build
-  if: branch = sergey/feature-renaming-comsat-to-connector
+  if: branch IN (develop, master)
 - name: package_build
-  if: branch = sergey/feature-renaming-comsat-to-connector
+  if: branch = master
 
 jobs:
   include:
