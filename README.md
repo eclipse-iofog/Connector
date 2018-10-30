@@ -25,7 +25,7 @@ When you put Connector, anywhere on your network (it can be even public Internet
      or
      sudo apt-get install iofog-connector-dev (developer's version)
 	   
-3.&ensp;Setup certificates if needed (After installation there are config.json, server-cert.per and server-key.per files present in the /etc/connector directory)
+3.&ensp;Setup certificates if needed (After installation there are config.json, server-cert.per and server-key.per files present in the /etc/iofog-connector directory)
 
      - config.json contains the list of existing connections
      - server-cert.per is a public key that tells that Iofog-Controller is allowed to Connector
@@ -46,7 +46,7 @@ When you put Connector, anywhere on your network (it can be even public Internet
       "broker":12345,
       "address":"127.0.0.1",
       "dev":true
-     }' > /etc/connector/connector.conf
+     }' > /etc/iofog-connector/iofog-connector.conf
 
 5.&ensp;Add Connector to Iofog-Controller database
 
@@ -54,7 +54,7 @@ When you put Connector, anywhere on your network (it can be even public Internet
     
  
 **Logs**
-- Log files are located at '/var/log/connector'
+- Log files are located at '/var/log/iofog-connector'
 
 **System Requirements (Recommended)**
 - Processor: 64 bit Dual Core or better
