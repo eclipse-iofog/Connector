@@ -9,7 +9,7 @@
 # Short-Description: Start/stop connector server
 ### END INIT INFO
 
-SERVICE_NAME=connectord
+SERVICE_NAME=iofog-connectord
 PATH_TO_JAR=/usr/bin
 JAR_FILE_NAME=$PATH_TO_JAR/$SERVICE_NAME
 

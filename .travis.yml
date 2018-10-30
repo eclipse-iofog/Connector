@@ -3,9 +3,9 @@ language: java
 jdk: openjdk8
 stages:
 - name: build
-  if: branch = sergey/feature-renaming-comsat-to-connector
+  if: branch = sergey/feature-renaming-connector-to-connector
 - name: package_build
-  if: branch = sergey/feature-renaming-comsat-to-connector
+  if: branch = sergey/feature-renaming-connector-to-connector
 
 jobs:
   include:
@@ -19,20 +19,20 @@ jobs:
     - export VERSION=`xml_grep --cond='project/version' pom.xml --text_only`
     - mvn clean install
     - sshpass -p $STAGE_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no
-      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP "rm -rf /comsat-packaging-rpm/*; rm -rf /comsat-packaging/*;"
-    - sshpass -p $STAGE_MACHINE_PASSWORD scp -o StrictHostKeyChecking=no -r connector-packaging-rpm/*
-      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/comsat-packaging-rpm/
-    - sshpass -p $STAGE_MACHINE_PASSWORD scp -r connector-packaging/*
-      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/comsat-packaging/
+      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP "rm -rf /iofog-connector-packaging-rpm/*; rm -rf /iofog-connector-packaging/*;"
+    - sshpass -p $STAGE_MACHINE_PASSWORD scp -o StrictHostKeyChecking=no -r iofog-connector-packaging-rpm/*
+      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/iofog-connector-packaging-rpm/
+    - sshpass -p $STAGE_MACHINE_PASSWORD scp -r iofog-connector-packaging/*
+      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/iofog-connector-packaging/
     - sshpass -p $STAGE_MACHINE_PASSWORD scp client/target/iofog-connector-client-jar-with-dependencies.jar
-      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/comsat-packaging/usr/bin/iofog-connector.jar
+      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/iofog-connector-packaging/usr/bin/iofog-connector.jar
     - sshpass -p $STAGE_MACHINE_PASSWORD scp daemon/target/iofog-connector-daemon-jar-with-dependencies.jar
-      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/comsat-packaging/usr/bin/iofog-connectord.jar
+      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/iofog-connector-packaging/usr/bin/iofog-connectord.jar
     - sshpass -p $STAGE_MACHINE_PASSWORD scp client/target/iofog-connector-client-jar-with-dependencies.jar
-      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/comsat-packaging-rpm/usr/bin/iofog-connector.jar
+      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/iofog-connector-packaging-rpm/usr/bin/iofog-connector.jar
     - sshpass -p $STAGE_MACHINE_PASSWORD scp daemon/target/iofog-connector-daemon-jar-with-dependencies.jar
-      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/comsat-packaging-rpm/usr/bin/iofog-connectord.jar
-    - sshpass -p $STAGE_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP "cd /comsat-packaging; fpm -s dir -t deb -n \"iofog-connector${DEV}\" -v $VERSION -a all --deb-no-default-config-files --after-install debian.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade debian.sh etc usr;
+      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/iofog-connector-packaging-rpm/usr/bin/iofog-connectord.jar
+    - sshpass -p $STAGE_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP "cd /iofog-connector-packaging; fpm -s dir -t deb -n \"iofog-connector${DEV}\" -v $VERSION -a all --deb-no-default-config-files --after-install debian.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade debian.sh etc usr;
       package_cloud push iofog/iofog-connector/ubuntu/precise iofog-connector${DEV}_${VERSION}_all.deb;
       package_cloud push iofog/iofog-connector/ubuntu/trusty iofog-connector${DEV}_${VERSION}_all.deb;
       package_cloud push iofog/iofog-connector/ubuntu/utopic iofog-connector${DEV}_${VERSION}_all.deb;
@@ -47,7 +47,7 @@ jobs:
       package_cloud push iofog/iofog-connector/raspbian/jessie iofog-connector${DEV}_${VERSION}_all.deb;
       package_cloud push iofog/iofog-connector/raspbian/stretch iofog-connector${DEV}_${VERSION}_all.deb;
       package_cloud push iofog/iofog-connector/raspbian/buster iofog-connector${DEV}_${VERSION}_all.deb;
-      cd /comsat-packaging-rpm; fpm -s dir -t rpm -n \"iofog-connector${DEV}\" -v $VERSION -a all --rpm-os 'linux' --after-install rpm.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade rpm.sh etc usr;
+      cd /iofog-connector-packaging-rpm; fpm -s dir -t rpm -n \"iofog-connector${DEV}\" -v $VERSION -a all --rpm-os 'linux' --after-install rpm.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade rpm.sh etc usr;
       package_cloud push iofog/iofog-connector/fedora/22 iofog-connector${DEV}-${VERSION}-1.noarch.rpm;
       package_cloud push iofog/iofog-connector/fedora/23 iofog-connector${DEV}-${VERSION}-1.noarch.rpm;
       package_cloud push iofog/iofog-connector/fedora/24 iofog-connector${DEV}-${VERSION}-1.noarch.rpm;
