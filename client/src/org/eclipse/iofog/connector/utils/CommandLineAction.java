@@ -30,7 +30,7 @@ public enum CommandLineAction {
 
 		@Override
 		public String perform(String[] args) {
-			return isAnotherInstanceRunning() ? "Enter \"service iofog-connector stop\"" : "Connector is already stopped.";
+			return isAnotherInstanceRunning() ? "Enter \"service iofog-connector stop\"" : "iofog-connector is already stopped.";
 		}
 	},
 	START_ACTION {
@@ -41,7 +41,7 @@ public enum CommandLineAction {
 
 		@Override
 		public String perform(String[] args) {
-			return isAnotherInstanceRunning() ? "Connector is already running." : "Enter \"service connector start\"";
+			return isAnotherInstanceRunning() ? "iofog-connector is already running." : "Enter \"service iofog-connector start\"";
 		}
 	},
 	STATUS_ACTION {
@@ -52,7 +52,7 @@ public enum CommandLineAction {
 
 		@Override
 		public String perform(String[] args) {
-			return isAnotherInstanceRunning() ? "Connector is up and running." : "Connector is stopped.";
+			return isAnotherInstanceRunning() ? "iofog-connector is up and running." : "iofog-connector is stopped.";
 		}
 	},
 	HELP_ACTION {
@@ -109,7 +109,7 @@ public enum CommandLineAction {
 	}
 
 	private static String showVersion() {
-		return "Connector " + Constants.VERSION +
+		return "Iofog-connector " + Constants.VERSION +
 				"\nCopyright (C) 2018 Edgeworx, Inc." +
 				"\nEclipse ioFog is provided under the Eclipse Public License (EPL2)" +
 				"\nhttps://www.eclipse.org/legal/epl-v20.html";

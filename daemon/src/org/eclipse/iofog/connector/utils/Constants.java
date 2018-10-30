@@ -23,13 +23,13 @@ import java.nio.charset.StandardCharsets;
  */
 public class Constants {
 
-    public static final String CONFIG_FILENAME = "/etc/connector/configs.json";
-    public static final String SETTINGS_FILENAME = "/etc/connector/connector.conf";
+    public static final String CONFIG_FILENAME = "/etc/iofog-connector/configs.json";
+    public static final String SETTINGS_FILENAME = "/etc/iofog-connector/connector.conf";
     public static final byte[] BEAT = "BEAT".getBytes(StandardCharsets.US_ASCII);
     public static final byte[] AUTHORIZED = "AUTHORIZED".getBytes(StandardCharsets.US_ASCII);
-    public static final String CERTITICATE_FILENAME = "/etc/connector/server-cert.pem";
-    public static final String KEY_FILENAME = "/etc/connector/server-key.pem";
-    public static final String LOG_FILENAME = "/var/log//connector/connector.log";
+    public static final String CERTITICATE_FILENAME = "/etc/iofog-connector/server-cert.pem";
+    public static final String KEY_FILENAME = "/etc/iofog-connector/server-key.pem";
+    public static final String LOG_FILENAME = "/var/log/iofog-connector/connector.log";
     public static final String VERSION = "2.0.2";
     
     public static final String API_DIRECT_REQUEST = "/api/v2/direct";
