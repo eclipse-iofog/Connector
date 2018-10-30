@@ -18,10 +18,10 @@ package org.eclipse.iofog.connector.utils;
  */
 public class Constants {
 
-    static final String SETTINGS_FILENAME = "/etc/iofog-connector/connector.conf";
+    static final String SETTINGS_FILENAME = "/etc/iofog-connector/iofog-connector.conf";
     static final String CERTITICATE_FILENAME = "/etc/iofog-connector/server-cert.pem";
     static final String KEY_FILENAME = "/etc/iofog-connector/server-key.pem";
-    static final String LOG_FILENAME = "/var/log/iofog-connector/connector_client.log";
+    static final String LOG_FILENAME = "/var/log/iofog-connector/iofog-connector-client.log";
     static final String VERSION = "2.0.2";
     static final String API_COMMAND_LINE = "/api/v2/commandline";
 
