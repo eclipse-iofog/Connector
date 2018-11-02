@@ -80,5 +80,5 @@ jobs:
       package_cloud push iofog/iofog-connector/fedora/24 iofog-connector${DEV}-${VERSION}-1.noarch.rpm;
       package_cloud yank iofog/iofog-connector/el/6 iofog-connector${DEV}-${VERSION}-1.noarch.rpm;
       package_cloud push iofog/iofog-connector/el/6 iofog-connector${DEV}-${VERSION}-1.noarch.rpm;
-      package_cloud yank iofog/iofog-connector/el/7 iofog-connector${DEV}-${VERSION}-1.noarch.rpm"
+      package_cloud yank iofog/iofog-connector/el/7 iofog-connector${DEV}-${VERSION}-1.noarch.rpm;
       package_cloud push iofog/iofog-connector/el/7 iofog-connector${DEV}-${VERSION}-1.noarch.rpm"
