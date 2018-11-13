@@ -1,6 +1,17 @@
 sudo: true
 language: java
 jdk: openjdk8
+notifications:
+  slack:
+    rooms:
+      - secure: vHoJ5ZPJrEzWUxbZAHrjPCOaOblmFYI5IvxlmSiSGEoBG9NJFw8d0Uh7RXG9x+xIKozg081byGYvbhgGUO5HPqAIb3sQ/tYpWnwtTSt05IErhbpPvtFGbzBEx9ZD54jDAFrqf3gmKN7udNlqmv7D9kt40Std6eXN2hDiGx2hp5LTY1Ny/PIPrbgEuOtraVBQd61r3WczXA7605pVBNhCJs66fnbOx/5wo2vQ+UKvvNocb03dscJxEvSA+6iBgyt+TpqtNK4HXfHV72ItwjDeHxft4lo1QxsuZCb2bYqKG8pSq7sOW/yps0mP4sNArBQ8lASt42tlZVhpt/pJWQyoGj/tAmLXcD2n9p37B64ds075ICVCIl5gwWDB8+2tUtJ6qDeho7vp8HEWxrUeFTIK5ld3gk/kd8stY8rHbvSN3++r7QdzLKg0u4ATN5rGaVZGHngD6X4/WubGVk6r4FJ3wBtXwdrCj1f8IVvdKT7USllW+nwA4Q4Lb4BGmIZlrpMU46jYp3Z8GHdUybPw6PJgWtmlkEe7pTEDAAsJ70oYdWwkcBsMoQhlivEzUuxkyrZtP1xLN4cjuaz2jRYIVzEIivxdmja3fODYhY6qRzsyD+3yiltR9Ro9uyiKq4yr0y+P9ix5m9YfcSknSPTeKQ30WXwwEmtQws1TteoPqZ7TvsI=
+    on_success: always
+    on_failure: always
+    template:
+    - Repo `%{repository_slug}` *%{result}* build (<%{build_url}|#%{build_number}>)
+      for commit (<%{compare_url}|%{commit}>) on branch `%{branch}`.
+    - 'Execution time: *%{duration}*'
+    - 'Message: %{message}'
 stages:
 - name: build
   if: branch IN (develop, master) AND type = pull_request
@@ -89,7 +100,3 @@ jobs:
       package_cloud push iofog/iofog-connector/el/6 iofog-connector${DEV}-${VERSION}-1.noarch.rpm;
       package_cloud yank iofog/iofog-connector/el/7 iofog-connector${DEV}-${VERSION}-1.noarch.rpm;
       package_cloud push iofog/iofog-connector/el/7 iofog-connector${DEV}-${VERSION}-1.noarch.rpm"
-notifications:
-  slack:
-    rooms:
-      secure: vHoJ5ZPJrEzWUxbZAHrjPCOaOblmFYI5IvxlmSiSGEoBG9NJFw8d0Uh7RXG9x+xIKozg081byGYvbhgGUO5HPqAIb3sQ/tYpWnwtTSt05IErhbpPvtFGbzBEx9ZD54jDAFrqf3gmKN7udNlqmv7D9kt40Std6eXN2hDiGx2hp5LTY1Ny/PIPrbgEuOtraVBQd61r3WczXA7605pVBNhCJs66fnbOx/5wo2vQ+UKvvNocb03dscJxEvSA+6iBgyt+TpqtNK4HXfHV72ItwjDeHxft4lo1QxsuZCb2bYqKG8pSq7sOW/yps0mP4sNArBQ8lASt42tlZVhpt/pJWQyoGj/tAmLXcD2n9p37B64ds075ICVCIl5gwWDB8+2tUtJ6qDeho7vp8HEWxrUeFTIK5ld3gk/kd8stY8rHbvSN3++r7QdzLKg0u4ATN5rGaVZGHngD6X4/WubGVk6r4FJ3wBtXwdrCj1f8IVvdKT7USllW+nwA4Q4Lb4BGmIZlrpMU46jYp3Z8GHdUybPw6PJgWtmlkEe7pTEDAAsJ70oYdWwkcBsMoQhlivEzUuxkyrZtP1xLN4cjuaz2jRYIVzEIivxdmja3fODYhY6qRzsyD+3yiltR9Ro9uyiKq4yr0y+P9ix5m9YfcSknSPTeKQ30WXwwEmtQws1TteoPqZ7TvsI=
