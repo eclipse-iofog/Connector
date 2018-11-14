@@ -22,6 +22,7 @@ import java.util.concurrent.Callable;
 import javax.json.Json;
 import javax.json.JsonObject;
 
+import io.netty.handler.ssl.SslContext;
 import org.eclipse.iofog.connector.config.ConfigManager;
 import org.eclipse.iofog.connector.config.Configuration;
 import org.eclipse.iofog.connector.exceptions.DuplicateIdException;
@@ -38,6 +39,7 @@ import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.QueryStringDecoder;
+import org.eclipse.iofog.connector.utils.SslManager;
 
 public class NewMappingHandler implements Callable<Object> {
 	
@@ -96,6 +98,9 @@ public class NewMappingHandler implements Callable<Object> {
 			}
 
 			SocketsManager socketsManager = new SocketsManager();
+			SslContext sslContext = Settings.isDevMode()
+					? null
+					: SslManager.getSslContext();
 
 			int port1 = -1;
 			do {
@@ -118,7 +123,7 @@ public class NewMappingHandler implements Callable<Object> {
 			LogUtil.info(String.format(">>>>>> ADD : %s (%d, %d)", mappingId, config.getPort1(), config.getPort2()));
 			ConfigManager.addMapping(config);
 			
-			socketsManager.openPort(config);
+			socketsManager.openPort(config, sslContext);
 			responseJson = Json.createObjectBuilder()
 					.add("status", "ok")
 					.add("id", mappingId)

@@ -13,22 +13,27 @@
 
 package org.eclipse.iofog.connector.restapi;
 
+import io.netty.handler.ssl.SslContext;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
 public class RestAPI {
 	
 	private static RestAPI instance = null;
 	private RestAPIServer apiServer;
-	private boolean secure;
+	private SslContext sslContext;
 
-	public void setSecure(boolean secure) {
-		this.secure = secure;
+	private void setSslContext(SslContext sslContext) {
+		this.sslContext = sslContext;
 	}
 
-	public static RestAPI getInstance(boolean devMode) {
+	public static RestAPI getInstance(SslContext sslContext) {
 		if (instance == null) {
 			synchronized (RestAPI.class) {
 				if (instance == null) {
 					instance = new RestAPI();
-					instance.setSecure(!devMode);
+					instance.setSslContext(sslContext);
 				}
 			}
 		}
@@ -36,9 +41,9 @@ public class RestAPI {
 		return instance;
 	}
 	
-	public void start() {
-        apiServer = RestAPIServer.getInstance(secure);
-        new Thread(apiServer).start();
+	public void start() throws ExecutionException, InterruptedException {
+        apiServer = RestAPIServer.getInstance(sslContext);
+		CompletableFuture.runAsync(() -> apiServer.start());
 	}
 	
 	public void stop() {

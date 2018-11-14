@@ -17,7 +17,6 @@ import org.eclipse.iofog.connector.privatesocket.PrivateSocket;
 import org.eclipse.iofog.connector.utils.Constants;
 import org.eclipse.iofog.connector.utils.LogUtil;
 import org.eclipse.iofog.connector.utils.Settings;
-import org.eclipse.iofog.connector.utils.SslManager;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -31,27 +30,20 @@ public class PublicSocket implements Runnable {
 
 	private Channel channel;
 	private boolean stopListening = false;
+	private SslContext sslContext;
 	
-	public PublicSocket(int port, PrivateSocket privateSocket) {
+	public PublicSocket(int port, PrivateSocket privateSocket, SslContext sslContext) {
 		this.port = port;
 		this.privateSocket = privateSocket;
+		this.sslContext = sslContext;
 	}
 
 	public void run() {
-		SslContext sslCtx = null;
-		if (!Settings.isDevMode()) {
-			try {
-				sslCtx = SslManager.getSslContext();
-			} catch (Exception e) {
-				System.out.println("Error reading certificates");
-				return;
-			}
-		}
 		while (!stopListening) {
 			try {
 				ServerBootstrap b = new ServerBootstrap();
 				b.group(Constants.bossGroup, Constants.workerGroup).channel(NioServerSocketChannel.class);
-				PublicSocketInitializer channelInitializer = new PublicSocketInitializer(privateSocket, sslCtx);
+				PublicSocketInitializer channelInitializer = new PublicSocketInitializer(privateSocket, sslContext);
 				b.childHandler(channelInitializer);
 
 				channel = b.bind(port).sync().channel();
