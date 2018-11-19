@@ -13,17 +13,16 @@
 
 package org.eclipse.iofog.connector;
 
+import io.netty.handler.ssl.SslContext;
 import org.eclipse.iofog.connector.config.ConfigManager;
 import org.eclipse.iofog.connector.config.Configuration;
 import org.eclipse.iofog.connector.restapi.RestAPI;
-import org.eclipse.iofog.connector.utils.Constants;
-import org.eclipse.iofog.connector.utils.LogUtil;
-import org.eclipse.iofog.connector.utils.Settings;
-import org.eclipse.iofog.connector.utils.SocketsManager;
+import org.eclipse.iofog.connector.utils.*;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
+import javax.net.ssl.SSLContext;
 import java.io.FileOutputStream;
 import java.util.Map.Entry;
 
@@ -37,8 +36,6 @@ import static org.eclipse.iofog.connector.utils.InstanceUtils.sendCommandlinePar
  */
 public class Connector {
 	public static final Object exitLock = new Object();
-
-	private static SocketsManager socketsManager;
 
 	public static void main(String[] args) {
         try {
@@ -57,43 +54,49 @@ public class Connector {
                         break;
                 }
             } else if ("start".equals(args[0])) {
-                ConfigManager.loadConfiguration();
-
-                RestAPI server = RestAPI.getInstance(Settings.isDevMode());
-                server.start();
-
-                Thread.sleep(1000);
-
-                socketsManager = new SocketsManager();
-                openPorts();
-
-                synchronized (exitLock) {
-                    exitLock.wait();
-                }
-
-                Thread.sleep(200);
-
-                server.stop();
-                closePorts();
-
-                Constants.bossGroup.shutdownGracefully();
-                Constants.workerGroup.shutdownGracefully();
-
-                System.exit(0);
+				startConnector();
             }
         } catch (Exception ex) {
-            LogUtil.warning(ex.getMessage());
+			LogUtil.warning(ex.getMessage());
         }
     }
 
-    private static void openPorts() {
+    private static void startConnector() throws Exception {
+		SslContext sslContext = Settings.isDevMode()
+				? null
+				: SslManager.getSslContext();
+
+		ConfigManager.loadConfiguration();
+
+		RestAPI server = RestAPI.getInstance(sslContext);
+		server.start();
+		SocketsManager socketsManager = new SocketsManager();
+		openPorts(socketsManager, sslContext);
+
+		synchronized (exitLock) {
+			System.out.println("Connector started.");
+			exitLock.wait();
+		}
+
+		Thread.sleep(200);
+
+		server.stop();
+		closePorts(socketsManager);
+
+		Constants.bossGroup.shutdownGracefully();
+		Constants.workerGroup.shutdownGracefully();
+
+		System.exit(0);
+	}
+
+    private static void openPorts(SocketsManager socketsManager, SslContext sslContext) {
         for (Entry<String, Configuration> e : ConfigManager.getMappings().entrySet()) {
             Configuration cfg = e.getValue();
-            socketsManager.openPort(cfg);
+            socketsManager.openPort(cfg, sslContext);
         }
     }
 
-    private static void closePorts() {
+    private static void closePorts(SocketsManager socketsManager) {
         socketsManager.closePorts();
     }
 
