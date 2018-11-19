@@ -20,18 +20,16 @@ When you put Connector, anywhere on your network (it can be even public Internet
 
 2 &ensp;Install Connector
 
-     curl -s https://packagecloud.io/install/repositories/iofog/connector/script.deb.sh | sudo bash
-     sudo apt-get install iofog-connector (release version)
-     or
-     sudo apt-get install iofog-connector-dev (developer's version)
+     curl -s https://packagecloud.io/install/repositories/iofog/iofog-connector/script.deb.sh | sudo bash
+     sudo apt-get install iofog-connector
 	   
-3.&ensp;Setup certificates if needed (After installation there are config.json, server-cert.per and server-key.per files present in the /etc/iofog-connector directory)
+3.&ensp;Setup certificates if needed (After installation there are configs.json, server-cert.pem and server-key.pem files present in the /etc/iofog-connector directory)
 
-     - config.json contains the list of existing connections
-     - server-cert.per is a public key that tells that Iofog-Controller is allowed to Connector
-     - server-key.per is a private key that has its own identity and uses it to talk to ioFog agent
+     - configs.json contains the list of existing connections
+     - server-cert.pem is a public key that tells that Iofog-Controller is allowed to Connector
+     - server-key.pem is a private key that has its own identity and uses it to talk to ioFog agent
 
-4.&ensp;Add connector.conf config file to Connector
+4.&ensp;Add iofog-connector.conf config file to Connector
 
      sudo echo '{
       "ports": [
@@ -50,7 +48,7 @@ When you put Connector, anywhere on your network (it can be even public Internet
 
 5.&ensp;Add Connector to Iofog-Controller database
 
-    iofog-controller connector -add <name> <domain> <publicIP>
+    iofog-controller connector -add -n <name> -d <domain> -i <publicIP>
     
  
 **Logs**
@@ -67,7 +65,7 @@ When you put Connector, anywhere on your network (it can be even public Internet
 - 16.04 - Xenial Xerus
 
 
-&ensp;- Connector Update:
+&ensp; *Connector Update*:
 
         sudo service iofog-connector stop       
         sudo apt-get install --only-upgrade iofog-connector
@@ -75,4 +73,35 @@ When you put Connector, anywhere on your network (it can be even public Internet
         or
         sudo service iofog-connector stop
         sudo apt-get install --only-upgrade iofog-connector-dev (developer's version)
-        sudo service iofog-connector stop        
+        sudo service iofog-connector stop   
+<br>
+<br>
+<br>
+
+**Connector CLI**
+
+*Connector Usage*
+
+$ iofog-connector <command>
+
+*Command List*
+
+start -- Start connector service. <br>
+stop -- Stop connector service.  <br>
+help -- Display usage information.  <br>
+version – Display the software version and license information. <br>
+status –  Display current status information about the software. <br>
+
+*Start* <br>
+service iofog-connector start <br>
+
+*Stop* <br>
+service iofog-connector stop <br>
+
+*Help* <br>
+Option: -h, -? <br> 
+GNU long option: --help<br>           
+
+*Version* <br>
+Option: -v   <br> 
+GNU long option: --version<br>
