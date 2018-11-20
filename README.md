@@ -105,3 +105,112 @@ GNU long option: --help<br>
 *Version* <br>
 Option: -v   <br> 
 GNU long option: --version<br>
+
+<br>
+<br>
+<br>
+
+**Connector API**<br>
+<br>
+Connector exposes API and it’s API where you have a set of identities. Fog Controller has the proper identity and it’s able to tell Connector “I want you to open up some connections”. Fog Controller uses Connector API to tell it to do and Connector simply replies whether it is successful or not successful.<br>
+<br>
+ioFog Agent connects to Connectors and through connecting Connectors traffic is able to move between fog nodes. In addition Connector has the capability to open traffic to the outside world so the outside users can get route into fog node.<br>
+<br>
+**Connector offers two connectivity types:**<br>
+
+**1)    The first type, called a public pipe, provides a way to securely access Fog software and data from anywhere on in the world. Connector punches through firewalls and NATed networks to perform automatic internetworking of the Fog.**<br>
+<br>
+Let’s describe what mapping is. Mapping is a way for describing a port opening, no matter whether you create a public or private pipe. It is an object that has an internal and an external port.<br>
+<br>
+*The Endpoint and Response (below) of a public pipe connection is displayed below (Add functionality):*<br>
+<br>
+**Endpoint**: /api/v2/mapping/add<br>
+**Method**: POST<br>
+**Header Content-Type**: application/x-www-form-urlencoded<br>
+**Parameters**: mapping={"type":"public","maxconnections":60,"heartbeatabsencethreshold":200000}<br>
+<br>
+"maxconnections" means how many connection threads the ioFog agent will make with the Connector . You can have many users at the same time.<br>
+"heartbeatabsencethreshold" means if we don’t have a heartbeat signal from the ioFog agent within 20 sec, we kill that connection thread.<br>
+<br>
+**Response:**<br>
+
+*{<br>
+     "status": "ok",<br>
+     "id": "2ae8ff72-7447-47de-a4ec-123eb214d63e",<br>
+     "port1": 32768,<br>
+     "port2": 32769,<br>
+     "passcode1": "0b403b65-c5a0-476f-92f5-ffc7ca0f85ef",<br>
+     "passcode2": "",<br>
+     "timestamp": 1542719018626<br>
+}*<br>
+<br>
+“id” is your ID for the mapping<br>
+"port1" - port that will be used by the ioFog agent<br>
+"port2" - port that will be by the Connector for public URL access<br>
+"passcode1” is used by the ioFog agent to establish a secure connection to the Connector. The Fog agent will receive the information through the Fog controller and tell you that you need to connect.<br>
+<br>
+*The Endpoint of public pipe connection is displayed below (Remove):*<br>
+<br>
+**Endpoint:** /api/v2/mapping/remove<br>
+**Method:** POST<br>
+**Header Content-Type:** application/x-www-form-urlencoded<br>
+**Parameters:** mappingid=e2454159-ed8c-4d00-a885-fdd87de811de<br>
+<br>
+**Response:**<br>
+<br>
+*{<br>
+     "status": "ok",<br>
+     "id": "2ae8ff72-7447-47de-a4ec-123eb214d63e",<br>
+     "timestamp": 1542719354334<br>
+}*<br>
+<br>
+**2)    The second type, called a private pipe, consumes bandwidth on the Connector but stabilizes connectivity between Fog nodes that can’t normally see each other.** <br>
+<br>
+Connector is available for 2 different ioFog agents talking to each other.<br>
+<br>
+*The Endpoint and Response (below) of a private pipe connection is displayed below (Add functionality):*<br>
+<br>
+**Endpoint:** /api/v2/mapping/add<br>
+**Method:** POST<br>
+**Header Content-Type:** application/x-www-form-urlencoded<br>
+**Parameters:** {"type":"private","maxconnectionsport1":1, "maxconnectionsport2":1, "heartbeatabsencethresholdport1":200000, "heartbeatabsencethresholdport2":200000}<br>
+<br>
+**Response:**<br>
+<br>
+*{<br>
+     "status": "ok",<br>
+     "id": "e2454159-ed8c-4d00-a885-fdd87de811de",<br>
+     "port1": 32770,<br>
+     "port2": 32771,<br>
+     "passcode1": "3dbd413c-10e9-4e40-a9cb-f4b8fb2b8b56",<br>
+     "passcode2": "7f4eb783-c2ab-4517-8aaf-c8395054193e",<br>
+     "timestamp": 1542719231127<br>
+}*<br>
+<br>
+The parameters description is the same as is described above for a public pipe.<br>
+Here “port1" will come out in "port2", and vice versa. Without the passcodes you will be immediately rejected.<br>
+<br>
+*The Endpoint of private pipe connection is displayed below (Remove):*<br>
+<br>
+**Endpoint:** /api/v2/mapping/remove<br>
+**Method:** POST<br>
+**Header Content-Type:** application/x-www-form-urlencoded<br>
+**Parameters:** mappingid=e2454159-ed8c-4d00-a885-fdd87de811de<br>
+<br>
+**Response:**<br>
+<br>
+*{<br>
+     "status": "ok",<br>
+     "id": "2ae8ff72-7447-47de-a4ec-123eb214d63e",<br>
+     "timestamp": 1542719354334<br>
+}*<br>
+<br>
+<br>
+<br>
+**! Private and Public connectivity types are set up in iofog-connector.conf file.**<br>
+iofog-connector.conf is a Connector config that includes allowed and excluded ports.<br>
+<br>
+When "dev": true, it's a public connectivity type. <br>
+Example: *https://${address} ${port2}*<br>
+When "dev": false, it's a private connectivity type. <br>
+Example: *http://${address} ${port2}*<br>
