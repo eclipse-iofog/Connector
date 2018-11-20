@@ -207,10 +207,13 @@ Here “port1" will come out in "port2", and vice versa. Without the passcodes y
 <br>
 <br>
 <br>
-**! Private and Public connectivity types are set up in iofog-connector.conf file.**<br>
-iofog-connector.conf is a Connector config that includes allowed and excluded ports.<br>
+**! In Public mode the URL is generated as follows:**<br>
 <br>
-When "dev": true, it's a public connectivity type. <br>
-Example: *https://${address} ${port2}*<br>
-When "dev": false, it's a private connectivity type. <br>
-Example: *http://${address} ${port2}*<br>
+Example: ${protocol}://${address}${port2} <br>
+where <br>
+{protocol} is either http:// or https://<br>
+{address} is either IP address or domain name<br>
+<br>
+*In iofog-connector.config file*<br>
+When "dev": true, it's http connection. <br>
+When "dev": false, it's https connection. <br>
