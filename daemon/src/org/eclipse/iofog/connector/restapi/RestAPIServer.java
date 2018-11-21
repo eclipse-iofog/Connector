@@ -13,42 +13,39 @@
 
 package org.eclipse.iofog.connector.restapi;
 
-import org.eclipse.iofog.connector.utils.Constants;
-import org.eclipse.iofog.connector.utils.LogUtil;
-import org.eclipse.iofog.connector.utils.SslManager;
-
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.ssl.SslContext;
+import org.eclipse.iofog.connector.utils.Constants;
+import org.eclipse.iofog.connector.utils.LogUtil;
 
 /**
  * Created by Saeid on 6/26/2016.
  */
-public class RestAPIServer implements Runnable {
+class RestAPIServer {
 
     private int port;
     private Channel ch;
     private SslContext sslCtx = null;
     private static RestAPIServer instance = null;
     
-    private RestAPIServer(int port) {
+    private RestAPIServer(int port, SslContext sslContext) {
     	this.port = port;
+    	this.sslCtx = sslContext;
     }
 
-    public int getPort() {
+    private int getPort() {
         return port;
     }
 
-    public static RestAPIServer getInstance(boolean secure) {
+    static RestAPIServer getInstance(SslContext sslContext) {
 		if (instance == null) {
 			synchronized (RestAPIServer.class) {
 				if (instance == null) {
-                    if (secure)
-                        instance = new RestAPIServer(Constants.HTTPS_PORT);
-                    else
-                        instance = new RestAPIServer(Constants.HTTP_PORT);
+					int port = sslContext != null ? Constants.HTTPS_PORT : Constants.HTTP_PORT;
+					instance = new RestAPIServer(port, sslContext);
                 }
 			}
 		}
@@ -56,12 +53,8 @@ public class RestAPIServer implements Runnable {
 		return instance;
     }
     
-    public void run() {
+	void start() {
         try {
-
-            if(instance.getPort() == Constants.HTTPS_PORT)
-                sslCtx = SslManager.getSslContext();
-
             ServerBootstrap b = new ServerBootstrap();
             b.option(ChannelOption.SO_BACKLOG, 1024);
             b.group(Constants.bossGroup, Constants.workerGroup)
@@ -72,10 +65,10 @@ public class RestAPIServer implements Runnable {
             ch.closeFuture().sync();
         } catch (Exception e) {
 			LogUtil.warning(e.getMessage());
-        }
+		}
     }
     
-    public void stop() {
+    void stop() {
     	if (ch != null) { 
     		try {
     			ch.disconnect().sync();

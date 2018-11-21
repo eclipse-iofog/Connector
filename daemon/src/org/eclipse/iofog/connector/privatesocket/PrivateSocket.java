@@ -20,8 +20,6 @@ import io.netty.handler.ssl.SslContext;
 import org.eclipse.iofog.connector.utils.Constants;
 import org.eclipse.iofog.connector.utils.LogUtil;
 import org.eclipse.iofog.connector.utils.Settings;
-import org.eclipse.iofog.connector.utils.SslManager;
-
 import java.util.*;
 
 public class PrivateSocket implements Runnable {
@@ -34,15 +32,17 @@ public class PrivateSocket implements Runnable {
 	private boolean stopListening = false;
 	private PrivateSocket pairSocket;
 	private static Map<Channel, Channel> channelsMapping;
+	private SslContext sslContext;
 	
 	public List<Channel> connections = new ArrayList<>();
 	
-	public PrivateSocket(int port, String passCode, int maxConnections) {
+	public PrivateSocket(int port, String passCode, int maxConnections, SslContext sslContext) {
 		this.passCode = passCode;
 		this.port = port;
 		this.maxConnections = maxConnections;
 		PrivateSocket.channelsMapping = new HashMap<>();
 		this.pairSocket = null;
+		this.sslContext = sslContext;
 	}
 	
 	public void run() {
@@ -51,15 +51,7 @@ public class PrivateSocket implements Runnable {
 				ServerBootstrap b = new ServerBootstrap();
 				b.group(Constants.bossGroup, Constants.workerGroup)
 					.channel(NioServerSocketChannel.class);
-				SslContext sslCtx = null;
-				if (!Settings.isDevMode()) {
-					try {
-						sslCtx = SslManager.getSslContext();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-				PrivateSocketInitializer channelInitializer = new PrivateSocketInitializer(sslCtx, this);
+				PrivateSocketInitializer channelInitializer = new PrivateSocketInitializer(sslContext, this);
 				b.childHandler(channelInitializer);
 
 				channel = b.bind(port).sync().channel();

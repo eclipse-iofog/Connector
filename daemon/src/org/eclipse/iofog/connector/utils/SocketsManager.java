@@ -13,6 +13,7 @@
 
 package org.eclipse.iofog.connector.utils;
 
+import io.netty.handler.ssl.SslContext;
 import org.eclipse.iofog.connector.config.Configuration;
 import org.eclipse.iofog.connector.privatesocket.PrivateSocket;
 import org.eclipse.iofog.connector.publicsocket.PublicSocket;
@@ -25,16 +26,16 @@ public class SocketsManager {
 	private static Map<String, PublicSocket> publicSockets = new HashMap<>();
 	private static Map<String, PrivateSocket> privateSockets = new HashMap<>();
 
-	public synchronized void openPort(Configuration cfg) {
+	public synchronized void openPort(Configuration cfg, SslContext sslContext) {
     	PublicSocket publicSocket = null;
-        PrivateSocket privateSocket = new PrivateSocket(cfg.getPort1(), cfg.getPassCode1(), cfg.getMaxConnections1());
+        PrivateSocket privateSocket = new PrivateSocket(cfg.getPort1(), cfg.getPassCode1(), cfg.getMaxConnections1(), sslContext);
 
         if (cfg.getPassCode2().equals("")) {
-        	publicSocket = new PublicSocket(cfg.getPort2(), privateSocket);
+        	publicSocket = new PublicSocket(cfg.getPort2(), privateSocket, sslContext);
             new Thread(publicSocket).start();
             publicSockets.put(cfg.getId(), publicSocket);
         } else {
-            PrivateSocket privateSocket2 = new PrivateSocket(cfg.getPort2(), cfg.getPassCode2(), cfg.getMaxConnections2());
+            PrivateSocket privateSocket2 = new PrivateSocket(cfg.getPort2(), cfg.getPassCode2(), cfg.getMaxConnections2(), sslContext);
             privateSocket.setPairSocket(privateSocket2);
             privateSocket2.setPairSocket(privateSocket);
             new Thread(privateSocket2).start();
