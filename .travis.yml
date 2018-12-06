@@ -18,7 +18,7 @@ stages:
 - name: dev_deploy
   if: branch = develop AND type = push
 - name: package_build
-  if: "(branch = develop AND type = cron) OR (branch = master and type = push)"
+  if: branch = master and type = push
 jobs:
   include:
   - stage: build
@@ -39,7 +39,6 @@ jobs:
     before_install:
     - sudo apt-get install sshpass xml-twig-tools
     script:
-    - if [ "$TRAVIS_BRANCH" == "develop" ]; then export DEV=-dev; fi
     - export VERSION=`xml_grep --cond='project/version' pom.xml --text_only`
     - mvn clean install
     - sshpass -p $STAGE_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP
@@ -56,53 +55,49 @@ jobs:
     - sshpass -p $STAGE_MACHINE_PASSWORD scp daemon/target/iofog-connector-daemon-jar-with-dependencies.jar
       $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/iofog-connector-packaging-rpm/usr/bin/iofog-connectord.jar
     - sshpass -p $STAGE_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP
-      "cd /iofog-connector-packaging; fpm -s dir -t deb -n \"iofog-connector${DEV}\"
+      "cd /iofog-connector-packaging; fpm -s dir -t deb -n \"iofog-connector\"
       -v $VERSION -a all --deb-no-default-config-files --after-install debian.sh --after-remove
       remove.sh --before-upgrade upgrade.sh --after-upgrade debian.sh etc usr; package_cloud
-      yank iofog/iofog-connector/ubuntu/precise iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/ubuntu/precise iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud yank iofog/iofog-connector/ubuntu/trusty iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/ubuntu/trusty iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud yank iofog/iofog-connector/ubuntu/utopic iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/ubuntu/utopic iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud yank iofog/iofog-connector/ubuntu/vivid iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/ubuntu/vivid iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud yank iofog/iofog-connector/ubuntu/wily iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/ubuntu/wily iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud yank iofog/iofog-connector/ubuntu/xenial iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/ubuntu/xenial iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud yank iofog/iofog-connector/debian/wheezy iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/debian/wheezy iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud yank iofog/iofog-connector/debian/jessie iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/debian/jessie iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud yank iofog/iofog-connector/debian/stretch iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/debian/stretch iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud yank iofog/iofog-connector/debian/buster iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/debian/buster iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud yank iofog/iofog-connector/raspbian/wheezy iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/raspbian/wheezy iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud yank iofog/iofog-connector/raspbian/jessie iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/raspbian/jessie iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud yank iofog/iofog-connector/raspbian/stretch iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/raspbian/stretch iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud yank iofog/iofog-connector/raspbian/buster iofog-connector${DEV}_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/raspbian/buster iofog-connector${DEV}_${VERSION}_all.deb;
-      cd /iofog-connector-packaging-rpm; fpm -s dir -t rpm -n \"iofog-connector${DEV}\"
+      yank iofog/iofog-connector/ubuntu/precise iofog-connector_${VERSION}_all.deb;
+      package_cloud push iofog/iofog-connector/ubuntu/precise iofog-connector_${VERSION}_all.deb;
+      package_cloud yank iofog/iofog-connector/ubuntu/trusty iofog-connector_${VERSION}_all.deb;
+      package_cloud push iofog/iofog-connector/ubuntu/trusty iofog-connector_${VERSION}_all.deb;
+      package_cloud yank iofog/iofog-connector/ubuntu/utopic iofog-connector_${VERSION}_all.deb;
+      package_cloud push iofog/iofog-connector/ubuntu/utopic iofog-connector_${VERSION}_all.deb;
+      package_cloud yank iofog/iofog-connector/ubuntu/vivid iofog-connector_${VERSION}_all.deb;
+      package_cloud push iofog/iofog-connector/ubuntu/vivid iofog-connector_${VERSION}_all.deb;
+      package_cloud yank iofog/iofog-connector/ubuntu/wily iofog-connector_${VERSION}_all.deb;
+      package_cloud push iofog/iofog-connector/ubuntu/wily iofog-connector_${VERSION}_all.deb;
+      package_cloud yank iofog/iofog-connector/ubuntu/xenial iofog-connector_${VERSION}_all.deb;
+      package_cloud push iofog/iofog-connector/ubuntu/xenial iofog-connector_${VERSION}_all.deb;
+      package_cloud yank iofog/iofog-connector/debian/wheezy iofog-connector_${VERSION}_all.deb;
+      package_cloud push iofog/iofog-connector/debian/wheezy iofog-connector_${VERSION}_all.deb;
+      package_cloud yank iofog/iofog-connector/debian/jessie iofog-connector_${VERSION}_all.deb;
+      package_cloud push iofog/iofog-connector/debian/jessie iofog-connector_${VERSION}_all.deb;
+      package_cloud yank iofog/iofog-connector/debian/stretch iofog-connector_${VERSION}_all.deb;
+      package_cloud push iofog/iofog-connector/debian/stretch iofog-connector_${VERSION}_all.deb;
+      package_cloud yank iofog/iofog-connector/debian/buster iofog-connector_${VERSION}_all.deb;
+      package_cloud push iofog/iofog-connector/debian/buster iofog-connector_${VERSION}_all.deb;
+      package_cloud yank iofog/iofog-connector/raspbian/wheezy iofog-connector_${VERSION}_all.deb;
+      package_cloud push iofog/iofog-connector/raspbian/wheezy iofog-connector_${VERSION}_all.deb;
+      package_cloud yank iofog/iofog-connector/raspbian/jessie iofog-connector_${VERSION}_all.deb;
+      package_cloud push iofog/iofog-connector/raspbian/jessie iofog-connector_${VERSION}_all.deb;
+      package_cloud yank iofog/iofog-connector/raspbian/stretch iofog-connector_${VERSION}_all.deb;
+      package_cloud push iofog/iofog-connector/raspbian/stretch iofog-connector_${VERSION}_all.deb;
+      package_cloud yank iofog/iofog-connector/raspbian/buster iofog-connector_${VERSION}_all.deb;
+      package_cloud push iofog/iofog-connector/raspbian/buster iofog-connector_${VERSION}_all.deb;
+      cd /iofog-connector-packaging-rpm; fpm -s dir -t rpm -n \"iofog-connector\"
       -v $VERSION -a all --rpm-os 'linux' --after-install rpm.sh --after-remove remove.sh
       --before-upgrade upgrade.sh --after-upgrade rpm.sh etc usr; package_cloud yank
-      iofog/iofog-connector/fedora/22 iofog-connector${DEV}-${VERSION}-1.noarch.rpm;
-      package_cloud push iofog/iofog-connector/fedora/22 iofog-connector${DEV}-${VERSION}-1.noarch.rpm;
-      package_cloud yank iofog/iofog-connector/fedora/23 iofog-connector${DEV}-${VERSION}-1.noarch.rpm;
-      package_cloud push iofog/iofog-connector/fedora/23 iofog-connector${DEV}-${VERSION}-1.noarch.rpm;
-      package_cloud yank iofog/iofog-connector/fedora/24 iofog-connector${DEV}-${VERSION}-1.noarch.rpm;
-      package_cloud push iofog/iofog-connector/fedora/24 iofog-connector${DEV}-${VERSION}-1.noarch.rpm;
-      package_cloud yank iofog/iofog-connector/el/6 iofog-connector${DEV}-${VERSION}-1.noarch.rpm;
-      package_cloud push iofog/iofog-connector/el/6 iofog-connector${DEV}-${VERSION}-1.noarch.rpm;
-      package_cloud yank iofog/iofog-connector/el/7 iofog-connector${DEV}-${VERSION}-1.noarch.rpm;
-      package_cloud push iofog/iofog-connector/el/7 iofog-connector${DEV}-${VERSION}-1.noarch.rpm"
-    - if [ "$TRAVIS_BRANCH" == "develop" ]; then 
-      sshpass -p $PRE_PROD_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $PRE_PROD_MACHINE_USERNAME@$PRE_PROD_MACHINE_IP
-      "service iofog-connector stop; apt-get install --only-upgrade iofog-connector-dev -y; service iofog-connector start";
-      else sshpass -p $PROD_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $PROD_MACHINE_USERNAME@$PROD_MACHINE_IP
-      "service iofog-connector stop; apt-get install --only-upgrade iofog-connector -y; service iofog-connector start";
-      fi  
+      iofog/iofog-connector/fedora/22 iofog-connector-${VERSION}-1.noarch.rpm;
+      package_cloud push iofog/iofog-connector/fedora/22 iofog-connector-${VERSION}-1.noarch.rpm;
+      package_cloud yank iofog/iofog-connector/fedora/23 iofog-connector-${VERSION}-1.noarch.rpm;
+      package_cloud push iofog/iofog-connector/fedora/23 iofog-connector-${VERSION}-1.noarch.rpm;
+      package_cloud yank iofog/iofog-connector/fedora/24 iofog-connector-${VERSION}-1.noarch.rpm;
+      package_cloud push iofog/iofog-connector/fedora/24 iofog-connector-${VERSION}-1.noarch.rpm;
+      package_cloud yank iofog/iofog-connector/el/6 iofog-connector-${VERSION}-1.noarch.rpm;
+      package_cloud push iofog/iofog-connector/el/6 iofog-connector-${VERSION}-1.noarch.rpm;
+      package_cloud yank iofog/iofog-connector/el/7 iofog-connector-${VERSION}-1.noarch.rpm;
+      package_cloud push iofog/iofog-connector/el/7 iofog-connector-${VERSION}-1.noarch.rpm"
+    - sshpass -p $PROD_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $PROD_MACHINE_USERNAME@$PROD_MACHINE_IP
+      "service iofog-connector stop; apt-get install --only-upgrade iofog-connector -y; service iofog-connector start"
