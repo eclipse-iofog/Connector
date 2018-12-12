@@ -109,7 +109,7 @@ public enum CommandLineAction {
 	}
 
 	private static String showVersion() {
-		return "Iofog-connector " + Constants.VERSION +
+		return "Iofog-connector " + CmdProperties.getVersion() +
 				"\nCopyright (C) 2018 Edgeworx, Inc." +
 				"\nEclipse ioFog is provided under the Eclipse Public License (EPL2)" +
 				"\nhttps://www.eclipse.org/legal/epl-v20.html";

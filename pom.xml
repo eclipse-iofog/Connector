@@ -24,4 +24,12 @@
         <module>client</module>
     </modules>
 
+    <build>
+        <resources>
+            <resource>
+                <directory>src</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
 </project>
