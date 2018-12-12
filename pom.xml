@@ -15,7 +15,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.eclipse.iofog</groupId>
     <artifactId>iofog-connector</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.2</version>
     <name>iofog-connector</name>
     <packaging>pom</packaging>
 
@@ -24,4 +24,12 @@
         <module>client</module>
     </modules>
 
+    <build>
+        <resources>
+            <resource>
+                <directory>src</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
 </project>
