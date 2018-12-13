@@ -15,6 +15,7 @@ package org.eclipse.iofog.connector.utils;
 
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.SslProvider;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
@@ -26,11 +27,21 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
 public class SslManager {
-	public static SslContext getSslContext() throws Exception {
-		return SslContextBuilder.forServer(
+
+	private static SslContext sslContext;
+
+	public static SslContext getSslContext() {
+		return sslContext;
+	}
+
+	public static void initSslContext(boolean isDevMode) throws Exception {
+		if (!isDevMode) {
+			sslContext = SslContextBuilder.forServer(
 				new File(Constants.CERTITICATE_FILENAME),
 				new File(Constants.KEY_FILENAME))
+				.sslProvider(SslProvider.JDK)
 				.build();
+		}
 	}
 	
 	public static SSLContext getSSLContext() throws Exception {        

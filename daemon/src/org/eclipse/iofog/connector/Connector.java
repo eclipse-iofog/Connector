@@ -13,7 +13,6 @@
 
 package org.eclipse.iofog.connector;
 
-import io.netty.handler.ssl.SslContext;
 import org.eclipse.iofog.connector.config.ConfigManager;
 import org.eclipse.iofog.connector.config.Configuration;
 import org.eclipse.iofog.connector.restapi.RestAPI;
@@ -22,7 +21,6 @@ import org.eclipse.iofog.connector.utils.*;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
-import javax.net.ssl.SSLContext;
 import java.io.FileOutputStream;
 import java.util.Map.Entry;
 
@@ -57,21 +55,20 @@ public class Connector {
 				startConnector();
             }
         } catch (Exception ex) {
-			LogUtil.warning(ex.getMessage());
+			LogUtil.error("Connector stopped with fatal error: " + ex.getMessage());
         }
     }
 
     private static void startConnector() throws Exception {
-		SslContext sslContext = Settings.isDevMode()
-				? null
-				: SslManager.getSslContext();
+		SslManager.initSslContext(Settings.isDevMode());
 
 		ConfigManager.loadConfiguration();
 
-		RestAPI server = RestAPI.getInstance(sslContext);
+		RestAPI server = RestAPI.getInstance();
 		server.start();
+
 		SocketsManager socketsManager = new SocketsManager();
-		openPorts(socketsManager, sslContext);
+		openPorts(socketsManager);
 
 		synchronized (exitLock) {
 			System.out.println("Connector started.");
@@ -89,10 +86,10 @@ public class Connector {
 		System.exit(0);
 	}
 
-    private static void openPorts(SocketsManager socketsManager, SslContext sslContext) {
+    private static void openPorts(SocketsManager socketsManager) {
         for (Entry<String, Configuration> e : ConfigManager.getMappings().entrySet()) {
             Configuration cfg = e.getValue();
-            socketsManager.openPort(cfg, sslContext);
+            socketsManager.openPort(cfg);
         }
     }
 
