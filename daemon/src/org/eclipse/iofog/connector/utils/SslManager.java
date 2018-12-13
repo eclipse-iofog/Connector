@@ -15,7 +15,6 @@ package org.eclipse.iofog.connector.utils;
 
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.SslProvider;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
@@ -39,7 +38,6 @@ public class SslManager {
 			sslContext = SslContextBuilder.forServer(
 				new File(Constants.CERTITICATE_FILENAME),
 				new File(Constants.KEY_FILENAME))
-				.sslProvider(SslProvider.JDK)
 				.build();
 		}
 	}

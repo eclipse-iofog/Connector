@@ -56,6 +56,7 @@ public class Connector {
             }
         } catch (Exception ex) {
 			LogUtil.error("Connector stopped with fatal error: " + ex.getMessage());
+			System.exit(1);
         }
     }
 
