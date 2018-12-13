@@ -17,9 +17,11 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.ssl.SslContext;
 import org.eclipse.iofog.connector.utils.Constants;
 import org.eclipse.iofog.connector.utils.LogUtil;
+import org.eclipse.iofog.connector.utils.Settings;
+
+import static org.eclipse.iofog.connector.restapi.RestAPI.restApiStartLock;
 
 /**
  * Created by Saeid on 6/26/2016.
@@ -28,24 +30,22 @@ class RestAPIServer {
 
     private int port;
     private Channel ch;
-    private SslContext sslCtx = null;
     private static RestAPIServer instance = null;
     
-    private RestAPIServer(int port, SslContext sslContext) {
+    private RestAPIServer(int port) {
     	this.port = port;
-    	this.sslCtx = sslContext;
     }
 
     private int getPort() {
         return port;
     }
 
-    static RestAPIServer getInstance(SslContext sslContext) {
+    static RestAPIServer getInstance() {
 		if (instance == null) {
 			synchronized (RestAPIServer.class) {
 				if (instance == null) {
-					int port = sslContext != null ? Constants.HTTPS_PORT : Constants.HTTP_PORT;
-					instance = new RestAPIServer(port, sslContext);
+					int port = Settings.isDevMode() ? Constants.HTTP_PORT : Constants.HTTPS_PORT;
+					instance = new RestAPIServer(port);
                 }
 			}
 		}
@@ -59,12 +59,15 @@ class RestAPIServer {
             b.option(ChannelOption.SO_BACKLOG, 1024);
             b.group(Constants.bossGroup, Constants.workerGroup)
                     .channel(NioServerSocketChannel.class)
-                    .childHandler(new RestAPIChannelInitializer(sslCtx));
+                    .childHandler(new RestAPIChannelInitializer());
             ch = b.bind(instance.getPort()).sync().channel();
             LogUtil.info(String.format("RestAPI server started on port: %d", instance.getPort()));
+            synchronized (restApiStartLock) {
+                restApiStartLock.notifyAll();
+            }
             ch.closeFuture().sync();
         } catch (Exception e) {
-			LogUtil.warning(e.getMessage());
+			LogUtil.error(e.getMessage());
 		}
     }
     
@@ -76,5 +79,9 @@ class RestAPIServer {
 				LogUtil.warning(e.getMessage());
     		}
     	}
+    }
+
+    boolean isOpen() {
+        return ch != null && ch.isOpen();
     }
 }

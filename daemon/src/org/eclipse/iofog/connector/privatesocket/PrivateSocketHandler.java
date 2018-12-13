@@ -13,13 +13,11 @@
 
 package org.eclipse.iofog.connector.privatesocket;
 
-import org.eclipse.iofog.connector.utils.Constants;
-import org.eclipse.iofog.connector.utils.LogUtil;
-
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.ssl.SslContext;
+import org.eclipse.iofog.connector.utils.Constants;
+import org.eclipse.iofog.connector.utils.LogUtil;
 
 public class PrivateSocketHandler extends SimpleChannelInboundHandler<byte[]> {
 
@@ -27,7 +25,7 @@ public class PrivateSocketHandler extends SimpleChannelInboundHandler<byte[]> {
 
 	private boolean init = true;
 
-	public PrivateSocketHandler(SslContext sslCtx, PrivateSocket socketServer) {
+	public PrivateSocketHandler(PrivateSocket socketServer) {
 		this.socketServer = socketServer;
 	}
 
