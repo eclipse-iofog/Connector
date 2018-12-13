@@ -26,11 +26,20 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
 public class SslManager {
-	public static SslContext getSslContext() throws Exception {
-		return SslContextBuilder.forServer(
+
+	private static SslContext sslContext;
+
+	public static SslContext getSslContext() {
+		return sslContext;
+	}
+
+	public static void initSslContext(boolean isDevMode) throws Exception {
+		if (!isDevMode) {
+			sslContext = SslContextBuilder.forServer(
 				new File(Constants.CERTITICATE_FILENAME),
 				new File(Constants.KEY_FILENAME))
 				.build();
+		}
 	}
 	
 	public static SSLContext getSSLContext() throws Exception {        

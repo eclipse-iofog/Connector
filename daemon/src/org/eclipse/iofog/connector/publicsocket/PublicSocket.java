@@ -13,15 +13,13 @@
 
 package org.eclipse.iofog.connector.publicsocket;
 
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.Channel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.eclipse.iofog.connector.privatesocket.PrivateSocket;
 import org.eclipse.iofog.connector.utils.Constants;
 import org.eclipse.iofog.connector.utils.LogUtil;
 import org.eclipse.iofog.connector.utils.Settings;
-
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.ssl.SslContext;
 
 public class PublicSocket implements Runnable {
 
@@ -30,12 +28,10 @@ public class PublicSocket implements Runnable {
 
 	private Channel channel;
 	private boolean stopListening = false;
-	private SslContext sslContext;
-	
-	public PublicSocket(int port, PrivateSocket privateSocket, SslContext sslContext) {
+
+	public PublicSocket(int port, PrivateSocket privateSocket) {
 		this.port = port;
 		this.privateSocket = privateSocket;
-		this.sslContext = sslContext;
 	}
 
 	public void run() {
@@ -43,7 +39,7 @@ public class PublicSocket implements Runnable {
 			try {
 				ServerBootstrap b = new ServerBootstrap();
 				b.group(Constants.bossGroup, Constants.workerGroup).channel(NioServerSocketChannel.class);
-				PublicSocketInitializer channelInitializer = new PublicSocketInitializer(privateSocket, sslContext);
+				PublicSocketInitializer channelInitializer = new PublicSocketInitializer(privateSocket);
 				b.childHandler(channelInitializer);
 
 				channel = b.bind(port).sync().channel();
