@@ -35,6 +35,10 @@ public class LogUtil {
 	public static void warning(String msg) {
 		logger.warning(msg);
 	}
+
+	public static void error(String msg) {
+		logger.severe(msg);
+	}
 	
 	public static void info(String msg) {
 		logger.info(msg);

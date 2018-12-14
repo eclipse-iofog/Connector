@@ -45,21 +45,14 @@ public class InstanceUtils {
 		return result;
 	}
 
-	public static String sendCommandlineParameters(String... args) {
-		String result;
-		try {
-			Map<String, String> params = new HashMap<>();
-			params.put("command", args[0]);
-			params.put("params", "");
-			Response response = sendHttpRequest(format("%s://%s%s", isDevMode()? Constants.HTTP : Constants.HTTPS, getAddress(), API_COMMAND_LINE), params);
-			String entity = response.readEntity(String.class);
-			JsonObject jsonObject = Json.createReader(new StringReader(entity)).readObject();
-			result = jsonObject.getString("response");
-		} catch (Exception ex) {
-			LogUtil.warning(ex.getMessage());
-			result = ex.getMessage();
-		}
-		return result;
+	public static String sendCommandlineParameters(String... args) throws Exception {
+		Map<String, String> params = new HashMap<>();
+		params.put("command", args[0]);
+		params.put("params", "");
+		Response response = sendHttpRequest(format("%s://%s%s", isDevMode()? Constants.HTTP : Constants.HTTPS, getAddress(), API_COMMAND_LINE), params);
+		String entity = response.readEntity(String.class);
+		JsonObject jsonObject = Json.createReader(new StringReader(entity)).readObject();
+		return jsonObject.getString("response");
 	}
 
 	private static Response sendHttpRequest(String url, Map<String, String> params) throws Exception {

@@ -18,7 +18,7 @@ import io.netty.handler.codec.http.*;
 import org.eclipse.iofog.connector.config.ConfigManager;
 import org.eclipse.iofog.connector.privatesocket.PrivateSocket;
 import org.eclipse.iofog.connector.publicsocket.PublicSocket;
-import org.eclipse.iofog.connector.utils.Constants;
+import org.eclipse.iofog.connector.utils.CmdProperties;
 import org.eclipse.iofog.connector.utils.LogUtil;
 import org.eclipse.iofog.connector.utils.SocketsManager;
 
@@ -72,7 +72,7 @@ public class StatusHandler implements Callable<Object> {
 			if (mappingId.equals("all")) {
 				objectBuilder.add("status", "running")
 							 .add("mappings", ConfigManager.getMappings().size() - ConfigManager.getDirectsCount())
-							 .add("version", Constants.VERSION);
+							 .add("version", CmdProperties.getVersion());
 			} else if (ConfigManager.getMappings().containsKey(mappingId)) {
 				SocketsManager socketsManager = new SocketsManager();
 				PublicSocket publicSocket = socketsManager.getPublicSocket(mappingId);

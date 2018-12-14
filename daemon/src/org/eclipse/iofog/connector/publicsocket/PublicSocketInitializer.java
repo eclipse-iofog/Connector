@@ -13,31 +13,28 @@
 
 package org.eclipse.iofog.connector.publicsocket;
 
-import org.eclipse.iofog.connector.privatesocket.PrivateSocket;
-
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
-import io.netty.handler.ssl.SslContext;
+import org.eclipse.iofog.connector.privatesocket.PrivateSocket;
+import org.eclipse.iofog.connector.utils.SslManager;
 
 public class PublicSocketInitializer extends ChannelInitializer<SocketChannel> {
 
 	private final PrivateSocket privateSocket;
-	private final SslContext sslCtx;
 
-    public PublicSocketInitializer(PrivateSocket privateSocket, SslContext sslCtx) {
+    public PublicSocketInitializer(PrivateSocket privateSocket) {
         this.privateSocket = privateSocket;
-        this.sslCtx = sslCtx;
     }
     
     @Override
 	protected void initChannel(SocketChannel ch) throws Exception {
     	ChannelPipeline pipeline = ch.pipeline();
 
-        if (sslCtx != null)
-        	pipeline.addLast(sslCtx.newHandler(ch.alloc()));
+        if (SslManager.getSslContext() != null)
+        	pipeline.addLast(SslManager.getSslContext().newHandler(ch.alloc()));
         pipeline.addLast(new ByteArrayDecoder());
         pipeline.addLast(new ByteArrayEncoder());
         pipeline.addLast(new PublicSocketHandler(privateSocket));

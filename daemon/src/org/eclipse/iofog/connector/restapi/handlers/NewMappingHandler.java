@@ -13,16 +13,8 @@
 
 package org.eclipse.iofog.connector.restapi.handlers;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
-import java.util.concurrent.Callable;
-
-import javax.json.Json;
-import javax.json.JsonObject;
-
-import io.netty.handler.ssl.SslContext;
+import io.netty.buffer.ByteBuf;
+import io.netty.handler.codec.http.*;
 import org.eclipse.iofog.connector.config.ConfigManager;
 import org.eclipse.iofog.connector.config.Configuration;
 import org.eclipse.iofog.connector.exceptions.DuplicateIdException;
@@ -30,16 +22,13 @@ import org.eclipse.iofog.connector.utils.LogUtil;
 import org.eclipse.iofog.connector.utils.Settings;
 import org.eclipse.iofog.connector.utils.SocketsManager;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
-import io.netty.handler.codec.http.QueryStringDecoder;
-import org.eclipse.iofog.connector.utils.SslManager;
+import javax.json.Json;
+import javax.json.JsonObject;
+import java.io.IOException;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
+import java.util.concurrent.Callable;
 
 public class NewMappingHandler implements Callable<Object> {
 	
@@ -98,9 +87,6 @@ public class NewMappingHandler implements Callable<Object> {
 			}
 
 			SocketsManager socketsManager = new SocketsManager();
-			SslContext sslContext = Settings.isDevMode()
-					? null
-					: SslManager.getSslContext();
 
 			int port1 = -1;
 			do {
@@ -123,7 +109,7 @@ public class NewMappingHandler implements Callable<Object> {
 			LogUtil.info(String.format(">>>>>> ADD : %s (%d, %d)", mappingId, config.getPort1(), config.getPort2()));
 			ConfigManager.addMapping(config);
 			
-			socketsManager.openPort(config, sslContext);
+			socketsManager.openPort(config);
 			responseJson = Json.createObjectBuilder()
 					.add("status", "ok")
 					.add("id", mappingId)

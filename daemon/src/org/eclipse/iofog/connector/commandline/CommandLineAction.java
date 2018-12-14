@@ -14,7 +14,7 @@
 package org.eclipse.iofog.connector.commandline;
 
 import org.eclipse.iofog.connector.Connector;
-import org.eclipse.iofog.connector.utils.Constants;
+import org.eclipse.iofog.connector.utils.CmdProperties;
 
 import java.util.Arrays;
 import java.util.List;
@@ -104,7 +104,7 @@ public enum CommandLineAction {
 	}
 
 	public static String showVersion() {
-		return "Connector " + Constants.VERSION +
+		return "Connector " + CmdProperties.getVersion() +
 				"\nCopyright (C) 2018 Edgeworx, Inc." +
 				"\nEclipse ioFog is provided under the Eclipse Public License (EPL2)" +
 				"\nhttps://www.eclipse.org/legal/epl-v20.html";
