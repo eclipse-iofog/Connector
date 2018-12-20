@@ -4,7 +4,7 @@ jdk: openjdk8
 notifications:
   slack:
     rooms:
-      - secure: vHoJ5ZPJrEzWUxbZAHrjPCOaOblmFYI5IvxlmSiSGEoBG9NJFw8d0Uh7RXG9x+xIKozg081byGYvbhgGUO5HPqAIb3sQ/tYpWnwtTSt05IErhbpPvtFGbzBEx9ZD54jDAFrqf3gmKN7udNlqmv7D9kt40Std6eXN2hDiGx2hp5LTY1Ny/PIPrbgEuOtraVBQd61r3WczXA7605pVBNhCJs66fnbOx/5wo2vQ+UKvvNocb03dscJxEvSA+6iBgyt+TpqtNK4HXfHV72ItwjDeHxft4lo1QxsuZCb2bYqKG8pSq7sOW/yps0mP4sNArBQ8lASt42tlZVhpt/pJWQyoGj/tAmLXcD2n9p37B64ds075ICVCIl5gwWDB8+2tUtJ6qDeho7vp8HEWxrUeFTIK5ld3gk/kd8stY8rHbvSN3++r7QdzLKg0u4ATN5rGaVZGHngD6X4/WubGVk6r4FJ3wBtXwdrCj1f8IVvdKT7USllW+nwA4Q4Lb4BGmIZlrpMU46jYp3Z8GHdUybPw6PJgWtmlkEe7pTEDAAsJ70oYdWwkcBsMoQhlivEzUuxkyrZtP1xLN4cjuaz2jRYIVzEIivxdmja3fODYhY6qRzsyD+3yiltR9Ro9uyiKq4yr0y+P9ix5m9YfcSknSPTeKQ30WXwwEmtQws1TteoPqZ7TvsI=
+      - secure: UxXFX+TCULNOrjtxazTFSWFHyVtwCpEfTzWVFIWXWf5Kot98h0epVSDqscrx2sC9UFRNBBweUIyk9M4VkgYgy2JjyE64OswJAw+qSpBm//k90PM8RygFw1IX3sKzoChgrnPKQh6W/2bqjPnQWdZC8HMsqWq5J3vMMdY30r4BifbLweQmUImQbMjXwY+PNVToD9aXMmeTNt/Xm4W7sFD4Nwg4bTDZF/hFC+VjhV4gCYthGeNjFchqnzGRNu/u2RFdkKyBOM2yEtHXvWMjBJJHyouUGRAJJhVQzGulKFgIMGewT01yCQoX9/b6GdtMLvBd53BGAyXGrq7LQqFiE/n1BU1QQtemWQDJuhtN1lBCFGfYa7NJ9nYq12xgrTHSErCakun+THphFGVBuheFAR0lXqj1VjkESf+4wzCUmWx1sV+/Qrk9n+cyg+/yEN2Cvq39mWS43ae0VAC28OYSEtsY1PTKS02sxJ33n40tiohvPnlMyxhyDdjnx9EvQYEgnsDUKmy/6rEbrNX4ZX1YwUPEYe3uK/OE+JpjZRr+I8qPpJgx7NwSpKCHQ7My1KEwAs8t2vj+ZaIPweAaUyKcz24D6H4LrBQXo0jQpjp0JcdxdpoXXTIjrXbUr8oDXBoli5e8SLmrVDjGqjGXADO1jkH3hUOHboXWAYFYymT1l+L2v1Q=
     on_success: always
     on_failure: always
     template:
@@ -28,89 +28,17 @@ jobs:
     before_install:
     - sudo apt-get install sshpass xml-twig-tools
     script:
-    - sshpass -p $DEV_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $DEV_MACHINE_USERNAME@$DEV_MACHINE_IP
-      "service iofog-connector stop"
-    - sshpass -p $DEV_MACHINE_PASSWORD scp -o StrictHostKeyChecking=no daemon/target/iofog-connector-daemon-jar-with-dependencies.jar
-      $DEV_MACHINE_USERNAME@$DEV_MACHINE_IP:/usr/bin/iofog-connectord.jar
-    - sshpass -p $DEV_MACHINE_PASSWORD scp -o StrictHostKeyChecking=no client/target/iofog-connector-client-jar-with-dependencies.jar
-      $DEV_MACHINE_USERNAME@$DEV_MACHINE_IP:/usr/bin/iofog-connector.jar
-    - sshpass -p $DEV_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $DEV_MACHINE_USERNAME@$DEV_MACHINE_IP
-      "service iofog-connector start"
+    - bash scripts/deploy.sh $DEV_MACHINE_PASSWORD $DEV_MACHINE_USERNAME $DEV_MACHINE_IP
   - stage: prod_deploy
     before_install:
     - sudo apt-get install sshpass xml-twig-tools
     script:
-    - sshpass -p $PROD_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $PROD_MACHINE_USERNAME@$PROD_MACHINE_IP
-      "service iofog-connector stop"
-    - sshpass -p $PROD_MACHINE_PASSWORD scp -o StrictHostKeyChecking=no daemon/target/iofog-connector-daemon-jar-with-dependencies.jar
-      $PROD_MACHINE_USERNAME@$PROD_MACHINE_IP:/usr/bin/iofog-connectord.jar
-    - sshpass -p $PROD_MACHINE_PASSWORD scp -o StrictHostKeyChecking=no client/target/iofog-connector-client-jar-with-dependencies.jar
-      $PROD_MACHINE_USERNAME@$PROD_MACHINE_IP:/usr/bin/iofog-connector.jar
-    - sshpass -p $PROD_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $PROD_MACHINE_USERNAME@$PROD_MACHINE_IP
-      "service iofog-connector start"
+    - bash scripts/deploy.sh $PROD_MACHINE_PASSWORD $PROD_MACHINE_USERNAME $PROD_MACHINE_IP
   - stage: release
     before_install:
     - sudo apt-get install sshpass xml-twig-tools
     script:
-    - export VERSION=`xml_grep --cond='project/version' pom.xml --text_only`
-    - sshpass -p $STAGE_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP
-      "rm -rf /iofog-connector-packaging-rpm/*; rm -rf /iofog-connector-packaging/*;"
-    - sshpass -p $STAGE_MACHINE_PASSWORD scp -o StrictHostKeyChecking=no -r iofog-connector-packaging-rpm/*
-      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/iofog-connector-packaging-rpm/
-    - sshpass -p $STAGE_MACHINE_PASSWORD scp -r iofog-connector-packaging/* $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/iofog-connector-packaging/
-    - sshpass -p $STAGE_MACHINE_PASSWORD scp client/target/iofog-connector-client-jar-with-dependencies.jar
-      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/iofog-connector-packaging/usr/bin/iofog-connector.jar
-    - sshpass -p $STAGE_MACHINE_PASSWORD scp daemon/target/iofog-connector-daemon-jar-with-dependencies.jar
-      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/iofog-connector-packaging/usr/bin/iofog-connectord.jar
-    - sshpass -p $STAGE_MACHINE_PASSWORD scp client/target/iofog-connector-client-jar-with-dependencies.jar
-      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/iofog-connector-packaging-rpm/usr/bin/iofog-connector.jar
-    - sshpass -p $STAGE_MACHINE_PASSWORD scp daemon/target/iofog-connector-daemon-jar-with-dependencies.jar
-      $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP:/iofog-connector-packaging-rpm/usr/bin/iofog-connectord.jar
-    - sshpass -p $STAGE_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $STAGE_MACHINE_USERNAME@$STAGE_MACHINE_IP
-      "cd /iofog-connector-packaging; fpm -s dir -t deb -n \"iofog-connector\"
-      -v $VERSION -a all --deb-no-default-config-files --after-install debian.sh --after-remove
-      remove.sh --before-upgrade upgrade.sh --after-upgrade debian.sh etc usr; package_cloud
-      yank iofog/iofog-connector/ubuntu/precise iofog-connector_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/ubuntu/precise iofog-connector_${VERSION}_all.deb;
-      package_cloud yank iofog/iofog-connector/ubuntu/trusty iofog-connector_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/ubuntu/trusty iofog-connector_${VERSION}_all.deb;
-      package_cloud yank iofog/iofog-connector/ubuntu/utopic iofog-connector_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/ubuntu/utopic iofog-connector_${VERSION}_all.deb;
-      package_cloud yank iofog/iofog-connector/ubuntu/vivid iofog-connector_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/ubuntu/vivid iofog-connector_${VERSION}_all.deb;
-      package_cloud yank iofog/iofog-connector/ubuntu/wily iofog-connector_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/ubuntu/wily iofog-connector_${VERSION}_all.deb;
-      package_cloud yank iofog/iofog-connector/ubuntu/xenial iofog-connector_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/ubuntu/xenial iofog-connector_${VERSION}_all.deb;
-      package_cloud yank iofog/iofog-connector/debian/wheezy iofog-connector_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/debian/wheezy iofog-connector_${VERSION}_all.deb;
-      package_cloud yank iofog/iofog-connector/debian/jessie iofog-connector_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/debian/jessie iofog-connector_${VERSION}_all.deb;
-      package_cloud yank iofog/iofog-connector/debian/stretch iofog-connector_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/debian/stretch iofog-connector_${VERSION}_all.deb;
-      package_cloud yank iofog/iofog-connector/debian/buster iofog-connector_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/debian/buster iofog-connector_${VERSION}_all.deb;
-      package_cloud yank iofog/iofog-connector/raspbian/wheezy iofog-connector_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/raspbian/wheezy iofog-connector_${VERSION}_all.deb;
-      package_cloud yank iofog/iofog-connector/raspbian/jessie iofog-connector_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/raspbian/jessie iofog-connector_${VERSION}_all.deb;
-      package_cloud yank iofog/iofog-connector/raspbian/stretch iofog-connector_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/raspbian/stretch iofog-connector_${VERSION}_all.deb;
-      package_cloud yank iofog/iofog-connector/raspbian/buster iofog-connector_${VERSION}_all.deb;
-      package_cloud push iofog/iofog-connector/raspbian/buster iofog-connector_${VERSION}_all.deb;
-      cd /iofog-connector-packaging-rpm; fpm -s dir -t rpm -n \"iofog-connector\"
-      -v $VERSION -a all --rpm-os 'linux' --after-install rpm.sh --after-remove remove.sh
-      --before-upgrade upgrade.sh --after-upgrade rpm.sh etc usr; package_cloud yank
-      iofog/iofog-connector/fedora/22 iofog-connector-${VERSION}-1.noarch.rpm;
-      package_cloud push iofog/iofog-connector/fedora/22 iofog-connector-${VERSION}-1.noarch.rpm;
-      package_cloud yank iofog/iofog-connector/fedora/23 iofog-connector-${VERSION}-1.noarch.rpm;
-      package_cloud push iofog/iofog-connector/fedora/23 iofog-connector-${VERSION}-1.noarch.rpm;
-      package_cloud yank iofog/iofog-connector/fedora/24 iofog-connector-${VERSION}-1.noarch.rpm;
-      package_cloud push iofog/iofog-connector/fedora/24 iofog-connector-${VERSION}-1.noarch.rpm;
-      package_cloud yank iofog/iofog-connector/el/6 iofog-connector-${VERSION}-1.noarch.rpm;
-      package_cloud push iofog/iofog-connector/el/6 iofog-connector-${VERSION}-1.noarch.rpm;
-      package_cloud yank iofog/iofog-connector/el/7 iofog-connector-${VERSION}-1.noarch.rpm;
-      package_cloud push iofog/iofog-connector/el/7 iofog-connector-${VERSION}-1.noarch.rpm"
+    - bash scripts/release.sh
     before_deploy:
     - git config --global user.name "${GH_USERNAME}";
     - git config credential.helper "store --file=.git/credentials";
@@ -119,7 +47,7 @@ jobs:
     deploy:
       provider: releases
       api_key: "${GH_TOKEN}"
-      name: "v${VERSION} ($(date +'%m/%d/%Y'))"
+      name: v${VERSION} ($(date +'%m/%d/%Y'))
       skip_cleanup: true
       on:
         branch: master
