@@ -17,8 +17,8 @@ stages:
   if: type = pull_request
 - name: dev_deploy
   if: branch = develop AND type = push
-- name: prod_deploy
-  if: branch = release AND type = push
+- name: pre_release
+  if: branch = /^release-.*$/ AND type = push
 - name: release
   if: branch = master and type = push
 jobs:
@@ -36,17 +36,17 @@ jobs:
       $DEV_MACHINE_USERNAME@$DEV_MACHINE_IP:/usr/bin/iofog-connector.jar
     - sshpass -p $DEV_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $DEV_MACHINE_USERNAME@$DEV_MACHINE_IP
       "service iofog-connector start"
-  - stage: prod_deploy
+  - stage: pre_release
     before_install:
     - sudo apt-get install sshpass xml-twig-tools
     script:
-    - sshpass -p $PROD_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $PROD_MACHINE_USERNAME@$PROD_MACHINE_IP
+    - sshpass -p $PREPROD_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $PREPROD_MACHINE_USERNAME@$PREPROD_MACHINE_IP
       "service iofog-connector stop"
-    - sshpass -p $PROD_MACHINE_PASSWORD scp -o StrictHostKeyChecking=no daemon/target/iofog-connector-daemon-jar-with-dependencies.jar
-      $PROD_MACHINE_USERNAME@$PROD_MACHINE_IP:/usr/bin/iofog-connectord.jar
-    - sshpass -p $PROD_MACHINE_PASSWORD scp -o StrictHostKeyChecking=no client/target/iofog-connector-client-jar-with-dependencies.jar
-      $PROD_MACHINE_USERNAME@$PROD_MACHINE_IP:/usr/bin/iofog-connector.jar
-    - sshpass -p $PROD_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $PROD_MACHINE_USERNAME@$PROD_MACHINE_IP
+    - sshpass -p $PREPROD_MACHINE_PASSWORD scp -o StrictHostKeyChecking=no daemon/target/iofog-connector-daemon-jar-with-dependencies.jar
+      $PREPROD_MACHINE_USERNAME@$PREPROD_MACHINE_IP:/usr/bin/iofog-connectord.jar
+    - sshpass -p $PREPROD_MACHINE_PASSWORD scp -o StrictHostKeyChecking=no client/target/iofog-connector-client-jar-with-dependencies.jar
+      $PREPROD_MACHINE_USERNAME@$PROD_MACHINE_IP:/usr/bin/iofog-connector.jar
+    - sshpass -p $PREPROD_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $PREPROD_MACHINE_USERNAME@$PROD_MACHINE_IP
       "service iofog-connector start"
   - stage: release
     before_install:
@@ -123,3 +123,6 @@ jobs:
       skip_cleanup: true
       on:
         branch: master
+    after_deploy:
+    - sshpass -p $PROD_MACHINE_PASSWORD ssh -o StrictHostKeyChecking=no $PROD_MACHINE_USERNAME@$PROD_MACHINE_IP
+      "service iofog-connector stop; sudo apt-get install --only-upgrade -y iofog-connector; service iofog-connector start"
