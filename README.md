@@ -10,6 +10,24 @@ Connector installs on any common version of Linux. It handles the traffic betwee
 When you put Connector, anywhere on your network (it can be even public Internet), anywhere that is visible to fog nodes, the Connector facilitates this talk to each other, it facilitates opening a port on public internet to talk to the fog. Thus you can reach microservices remotely, and microservices come in together from different locations.
 
 
+### Status
+
+![](https://img.shields.io/github/release/iofog/controller.svg?style=flat)
+[![Build Status](https://travis-ci.org/ioFog/Controller.svg)](https://travis-ci.org/ioFog/Controller)
+
+![](https://img.shields.io/github/repo-size/iofog/controller.svg?style=flat)
+![](https://img.shields.io/github/last-commit/iofog/controller.svg?style=flat)
+![](https://img.shields.io/github/contributors/iofog/controller.svg?style=flat)
+![](https://img.shields.io/github/issues/iofog/controller.svg?style=flat)
+
+![Supports amd64 Architecture][amd64-shield]
+![Supports aarch64 Architecture][arm64-shield]
+![Supports armhf Architecture][arm-shield]
+
+[arm64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
+[amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
+[arm-shield]: https://img.shields.io/badge/armhf-yes-green.svg
+
 **Connector Setup**
 
 1.&ensp;In order to install Connector, you need to have Java installed on your machine.
