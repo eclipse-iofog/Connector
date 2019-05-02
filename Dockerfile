@@ -1,9 +1,9 @@
 FROM iofog/java-ubuntu-x86:8u211
 
-ADD packaging/iofog-connector-packaging /etc
-ADD packaging/iofog-connector-packaging /usr
-ADD daemon/target/iofog-connector-daemon-jar-with-dependencies.jar /usr/bin/iofog-connectord.jar
-ADD client/target/iofog-connector-client-jar-with-dependencies.jar /usr/bin/iofog-connector.jar
+COPY packaging/iofog-connector-packaging/etc /etc
+COPY packaging/iofog-connector-packaging/usr /usr
+COPY daemon/target/iofog-connector-daemon-jar-with-dependencies.jar /usr/bin/iofog-connectord.jar
+COPY client/target/iofog-connector-client-jar-with-dependencies.jar /usr/bin/iofog-connector.jar
 
 RUN apt-get update && \
     apt-get install -y sudo && \
