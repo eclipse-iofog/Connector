@@ -17,7 +17,7 @@ pool:
   vmImage: 'Ubuntu-16.04'
 
 variables:
-  repository: 'focal-freedom-236620/controller'
+  repository: 'focal-freedom-236620/connector'
   type: $(Build.SourceBranchName)
   commit: $(Build.SourceVersion)
 
