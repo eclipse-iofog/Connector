@@ -53,3 +53,17 @@ steps:
   - script: |
       echo "mvn test"
     displayName: 'api tests'
+
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: $(System.DefaultWorkingDirectory)
+      TargetFolder: $(Build.ArtifactStagingDirectory)
+      Contents: |
+        daemon/target/iofog-connector-daemon-jar-with-dependencies.jar
+        client/target/iofog-connector-client-jar-with-dependencies.jar
+      OverWrite: true
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'connector'
