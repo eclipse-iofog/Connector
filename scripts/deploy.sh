@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 PASSWORD=$1
 USER=$2

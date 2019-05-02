@@ -1,0 +1,69 @@
+trigger:
+  tags:
+    include:
+      - v.*
+  branches:
+    include:
+      - develop
+      - master
+  paths:
+    exclude:
+      - README.md
+
+pr:
+  - master
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+variables:
+  repository: 'focal-freedom-236620/connector'
+  type: $(Build.SourceBranchName)
+  commit: $(Build.SourceVersion)
+
+steps:
+
+  - task: Maven@3
+    inputs:
+      mavenPomFile: 'pom.xml'
+      mavenOptions: '-Xmx3072m'
+      javaHomeOption: 'JDKVersion'
+      jdkVersionOption: '1.8'
+      jdkArchitectureOption: 'x64'
+      publishJUnitResults: false
+      testResultsFiles: '**/surefire-reports/TEST-*.xml'
+      goals: 'package'
+
+  - script: |
+      echo " test"
+    displayName: 'tests'
+
+  - task: Docker@2
+    displayName: 'build and push docker'
+    inputs:
+      containerRegistry: 'Edgeworx GCP'
+      repository: $(repository)
+      command: 'buildAndPush'
+      Dockerfile: 'Dockerfile'
+      tags: |
+        $(commit)
+        $(type)
+        latest
+
+  - script: |
+      echo "mvn test"
+    displayName: 'api tests'
+
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: $(System.DefaultWorkingDirectory)
+      TargetFolder: $(Build.ArtifactStagingDirectory)
+      Contents: |
+        daemon/target/iofog-connector-daemon-jar-with-dependencies.jar
+        client/target/iofog-connector-client-jar-with-dependencies.jar
+      OverWrite: true
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'connector'

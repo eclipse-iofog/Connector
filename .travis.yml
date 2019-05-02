@@ -12,6 +12,9 @@ notifications:
         for commit (<%{compare_url}|%{commit}>) on branch `%{branch}`.
       - 'Execution time: *%{duration}*'
       - 'Message: %{message}'
+env:
+  global:
+    - COMMIT=${TRAVIS_COMMIT::8}
 stages:
 - name: build
   if: type = pull_request
@@ -30,22 +33,43 @@ jobs:
     script:
     - export VERSION=`xml_grep --cond='project/version' pom.xml --text_only`
     - export ID=-dev
-    - bash scripts/packaging.sh
-    - bash scripts/deploy.sh $DEV_MACHINE_PASSWORD $DEV_MACHINE_USERNAME $DEV_MACHINE_IP
+    - |
+      bash scripts/packaging.sh &&
+      bash scripts/deploy.sh $DEV_MACHINE_PASSWORD $DEV_MACHINE_USERNAME $DEV_MACHINE_IP &&
+      bash scripts/deploy.sh $JRC_MACHINE_PASSWORD $JRC_MACHINE_USERNAME $JRC_MACHINE_IP &&
+      bash scripts/deploy.sh $ATTINAD_MACHINE_PASSWORD $ATTINAD_MACHINE_USERNAME $ATTINAD_MACHINE_IP &&
+      docker build -t iofog/connector-develop:latest --build-arg TAG=$ID . &&
+      echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin &&
+      docker push iofog/connector-develop:latest &&
+      docker tag iofog/connector-develop:latest iofog/connector-develop:$COMMIT &&
+      docker push iofog/connector-develop:$COMMIT || travis_terminate 1
   - stage: pre_release
     before_install:
     - sudo apt-get install sshpass xml-twig-tools
     script:
-    - export VERSION=`xml_grep --cond='project/version' pom.xml --text_only`
-    - export ID=-prerelease
-    - bash scripts/packaging.sh
-    - bash scripts/deploy.sh $PREPROD_MACHINE_PASSWORD $PREPROD_MACHINE_USERNAME $PREPROD_MACHINE_IP
+    - |
+      export VERSION=`xml_grep --cond='project/version' pom.xml --text_only` &&
+      export ID=-prerelease
+    - |
+      bash scripts/packaging.sh &&
+      bash scripts/deploy.sh $PREPROD_MACHINE_PASSWORD $PREPROD_MACHINE_USERNAME $PREPROD_MACHINE_IP &&
+      docker build -t iofog/connector:rc . &&
+      echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin &&
+      docker push iofog/connector:rc &&
+      docker tag iofog/connector:rc iofog/connector:rc-$VERSION &&
+      docker push iofog/connector:rc-$VERSION || travis_terminate 1
   - stage: release
     before_install:
     - sudo apt-get install sshpass xml-twig-tools
     script:
     - export VERSION=`xml_grep --cond='project/version' pom.xml --text_only`
-    - bash scripts/packaging.sh
+    - |
+      bash scripts/packaging.sh &&
+      docker build -t iofog/connector:latest . &&
+      echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin &&
+      docker push iofog/connector:latest &&
+      docker tag iofog/connector:latest iofog/connector:$VERSION &&
+      docker push iofog/connector:$VERSION || travis_terminate 1
     before_deploy:
     - git config --global user.name "${GH_USERNAME}";
     - git config credential.helper "store --file=.git/credentials";
