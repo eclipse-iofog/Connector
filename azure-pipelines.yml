@@ -39,7 +39,7 @@ steps:
     displayName: 'tests'
 
   - task: Docker@2
-    displayName: 'build dev docker'
+    displayName: 'build and push docker'
     inputs:
       containerRegistry: 'Edgeworx GCP'
       repository: $(repository)
