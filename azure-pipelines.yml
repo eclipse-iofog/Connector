@@ -1,0 +1,169 @@
+trigger:
+  tags:
+    include:
+      - v.*
+  branches:
+    include:
+      - develop
+      - release
+  paths:
+    exclude:
+      - README.md
+
+pr:
+  - master
+
+variables:
+  repository: 'focal-freedom-236620/connector'
+  primaryTag: $(Build.SourceBranchName)
+
+jobs:
+  - job: Platform
+    dependsOn: Connector
+    pool: server
+    variables:
+      commit: $[dependencies.Connector.outputs['setvarStep.commit']]
+
+    steps:
+      - task: InvokeRESTAPI@1
+        displayName: 'trigger platform job'
+        inputs:
+          connectionType: 'connectedServiceName'
+          serviceConnection: 'Pipelines'
+          method: 'POST'
+          urlSuffix: '/edgeworx/_apis/build/builds?api-version=5.0'
+          body: "{\"Parameters\":\"{\\\"images.connector\\\": \\\"gcr.io/$(repository):$(commit)\\\"}\", \"Definition\":{\"id\":\"5\"}}"
+          waitForCompletion: 'false'
+
+  - job: Connector
+    pool:
+      vmImage: 'Ubuntu-16.04'
+
+    steps:
+      - task: Maven@3
+        inputs:
+          mavenPomFile: 'pom.xml'
+          mavenOptions: '-Xmx3072m'
+          javaHomeOption: 'JDKVersion'
+          jdkVersionOption: '1.8'
+          jdkArchitectureOption: 'x64'
+          publishJUnitResults: false
+          testResultsFiles: '**/surefire-reports/TEST-*.xml'
+          goals: 'package'
+
+      - script: |
+          echo " test"
+        displayName: 'tests'
+
+      - script: |
+          echo 'setting commit tag'
+          commit=$(git rev-parse --short=5 HEAD)
+          echo "##vso[task.setvariable variable=commit]$commit"
+          echo "##vso[task.setvariable variable=commit;isOutput=true]$commit"
+
+          echo 'setting primary tag'
+          echo $(Build.SourceBranch)
+          if [[ $(Build.SourceBranchName) == 'develop' ]]; then
+            echo "##vso[task.setvariable variable=primaryTag;isOutput=true]dev-latest"
+          elif [[ $(Build.SourceBranch) == refs/heads/release* ]]; then
+            echo "##vso[task.setvariable variable=primaryTag;isOutput=true]rc-latest"
+          #If branch starts with ref/tags, apply latest and version tag
+          elif [[ $(Build.SourceBranch) == refs/tags* ]]; then
+            echo "##vso[task.setvariable variable=commit]latest"
+            echo "##vso[task.setvariable variable=commit;isOutput=true]latest"
+          fi
+          echo 'commit tag: '$commit
+          echo 'primary tag: '$primaryTag
+        displayName: 'configure tagging variables'
+        name: setvarStep
+
+      - task: Docker@2
+        displayName: 'build and push docker'
+        inputs:
+          containerRegistry: 'Edgeworx GCP'
+          repository: $(repository)
+          command: 'buildAndPush'
+          Dockerfile: 'Dockerfile'
+          tags: |
+            $(commit)
+            $(primaryTag)
+
+      - script: |
+          echo "mvn test"
+        displayName: 'api tests'
+
+      - script: |
+          cp daemon/target/iofog-connector-daemon-jar-with-dependencies.jar iofog-connector-packaging/usr/bin/iofog-connector.jar
+          cp daemon/target/iofog-connector-daemon-jar-with-dependencies.jar iofog-connector-packaging/usr/bin/iofog-connectord.jar
+          cp daemon/target/iofog-connector-daemon-jar-with-dependencies.jar iofog-connector-packaging-rpm/usr/bin/iofog-connector.jar
+          cp daemon/target/iofog-connector-daemon-jar-with-dependencies.jar iofog-connector-packaging-rpm/usr/bin/iofog-connectord.jar
+        displayName: 'copy jars for packaging'
+
+      - script: |
+          sudo apt-get update && apt-get upgrade
+          sudo apt-get install ruby ruby-dev rubygems build-essential
+          sudo gem install --no-ri --no-rdoc fpm
+        displayName: 'install fpm'
+
+      - script: |
+          version=rc-test
+          echo $version
+          cd iofog-connector-packaging
+          fpm -s dir -t deb -n iofog-connector -v $version -a all --deb-no-default-config-files --after-install debian.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade debian.sh etc usr
+          echo "pkg maybe created"
+          package=$(ls | grep *.deb)
+          echo $package
+          echo "##vso[task.setvariable variable=deb_package]$package"
+          echo "##vso[task.setvariable variable=package_version]$version"
+        displayName: 'create deb package'
+
+      - task: UniversalPackages@0
+        inputs:
+          command: 'publish'
+          feedsToUse: 'internal'
+          publishDirectory: '$(Build.ArtifactStagingDirectory)'
+          feedsToUsePublish: 'internal'
+          vstsFeedPublish: 'dev'
+          vstsFeedPackagePublish: '$(DEB_PACKAGE)'
+          versionOption: 'custom'
+          versionPublish: '$(PACKAGE_VERSION)-$(Build.BuildId)'
+          packagePublishDescription: 'Dev debian package'
+          verbosity: 'Information'
+
+      - script: |
+          cd iofog-connector-packaging-rpm
+          fpm -s dir -t rpm -n iofog-connector -v $PACKAGE_VERSION -a all --rpm-os 'linux' --after-install rpm.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade rpm.sh etc usr;
+          echo "pkg maybe created"
+          package=$(ls | grep *.rpm)
+          echo $package
+          echo "##vso[task.setvariable variable=rpm_package]$package"
+        displayName: 'create rpm package'
+
+      - task: UniversalPackages@0
+        inputs:
+          command: 'publish'
+          feedsToUse: 'internal'
+          publishDirectory: '$(Build.ArtifactStagingDirectory)'
+          feedsToUsePublish: 'internal'
+          vstsFeedPublish: 'dev'
+          vstsFeedPackagePublish: '$(RPM_PACKAGE)'
+          versionOption: 'custom'
+          versionPublish: '$(PACKAGE_VERSION)-$(Build.BuildId)'
+          packagePublishDescription: 'Dev rpm package'
+          verbosity: 'Information'
+
+      - task: CopyFiles@2
+        inputs:
+          SourceFolder: $(System.DefaultWorkingDirectory)
+          TargetFolder: $(Build.ArtifactStagingDirectory)
+          Contents: |
+            daemon/target/iofog-connector-daemon-jar-with-dependencies.jar
+            client/target/iofog-connector-client-jar-with-dependencies.jar
+            **/*.deb
+            **/*.rpm
+          OverWrite: true
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          ArtifactName: 'connector'

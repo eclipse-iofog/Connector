@@ -1,0 +1,5 @@
+.idea/
+target
+iofog-agent.iml
+**/*.jar
+**/*.iml
