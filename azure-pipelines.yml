@@ -57,14 +57,14 @@ jobs:
         inputs:
           versionSpec: '8.x'
         displayName: 'Install Node.js'
-      
+
       - script: |
           npm i -g snyk
           snyk monitor --project-name=ConnectorCI
         env:
           SNYK_TOKEN: $(snykToken)
         displayName: 'Snyk monitor'
-    
+
       - script: |
           echo " test"
         displayName: 'tests'
@@ -75,21 +75,16 @@ jobs:
           echo "##vso[task.setvariable variable=secondaryTag]$commit"
           echo "##vso[task.setvariable variable=secondaryTag;isOutput=true]$commit"
 
-          echo 'setting primary tag'
-          echo $(Build.SourceBranch)
-          if [[ $(Build.SourceBranchName) == 'develop' ]]; then
-            echo "##vso[task.setvariable variable=primaryTag;isOutput=true]dev-latest"
-          elif [[ $(Build.SourceBranch) == refs/heads/release* ]]; then
-            echo "##vso[task.setvariable variable=primaryTag;isOutput=true]rc-latest"
+          if [[ $(Build.SourceBranch) == refs/heads/release* ]]; then
+            echo "##vso[task.setvariable variable=primaryTag]rc-$(Build.SourceBranchName)"
+            echo "##vso[task.setvariable variable=primaryTag;isOutput=true]rc-$(Build.SourceBranchName)"
           #If branch starts with ref/tags, apply latest and version tag
-          elif [[ $(Build.SourceBranch) == refs/tag* ]]; then
+          elif [[ $(Build.SourceBranch) == refs/tags* ]]; then
             primaryTag= echo $(primaryTag) | awk '{print substr($1,2);}'
             echo $primaryTag
             echo "##vso[task.setvariable variable=primaryTag]$primaryTag"
-            echo "##vso[task.setvariable variable=primaryTag;isOutput=true]$primaryTag"
             echo "##vso[task.setvariable variable=secondaryTag]latest"
             echo "##vso[task.setvariable variable=secondaryTag;isOutput=true]latest"
-          fi
         displayName: 'configure tagging variables'
         name: setvarStep
 
