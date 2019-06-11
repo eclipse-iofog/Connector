@@ -77,7 +77,6 @@ jobs:
 
           if [[ $(Build.SourceBranch) == refs/heads/release* ]]; then
             echo "##vso[task.setvariable variable=primaryTag]rc-$(Build.SourceBranchName)"
-            echo "##vso[task.setvariable variable=primaryTag;isOutput=true]rc-$(Build.SourceBranchName)"
           #If branch starts with ref/tags, apply latest and version tag
           elif [[ $(Build.SourceBranch) == refs/tags* ]]; then
             primaryTag= echo $(primaryTag) | awk '{print substr($1,2);}'
@@ -85,6 +84,7 @@ jobs:
             echo "##vso[task.setvariable variable=primaryTag]$primaryTag"
             echo "##vso[task.setvariable variable=secondaryTag]latest"
             echo "##vso[task.setvariable variable=secondaryTag;isOutput=true]latest"
+          fi
         displayName: 'configure tagging variables'
         name: setvarStep
 
@@ -117,7 +117,7 @@ jobs:
 
       - task: UseRubyVersion@0
         inputs:
-          versionSpec: '>= 2.5'
+          versionSpec: '= 2.5.5'
           addToPath: true
         displayName: 'install rubygem to be used to install package_cloud cli'
 
