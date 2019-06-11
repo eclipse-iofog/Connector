@@ -22,7 +22,7 @@ jobs:
     dependsOn: Connector
     pool: server
     variables:
-      commit: $[dependencies.Connector.outputs['setvarStep.commit']]
+      commit: $[dependencies.Connector.outputs['setvarStep.secondaryTag']]
 
     steps:
       - task: InvokeRESTAPI@1
@@ -82,7 +82,7 @@ jobs:
           command: 'buildAndPush'
           Dockerfile: 'Dockerfile'
           tags: |
-            $(commit)
+            $(secondaryTag)
             $(primaryTag)
 
       - script: |
