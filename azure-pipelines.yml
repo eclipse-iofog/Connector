@@ -131,7 +131,7 @@ jobs:
         displayName: 'install package_cloud cli and fpm'
 
       - script: |
-          version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout).$(Build.BuildId)
+          version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)-b$(Build.BuildId)
           echo $version
           cd iofog-connector-packaging
           fpm -s dir -t deb -n iofog-connector -v $version -a all --deb-no-default-config-files --after-install debian.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade debian.sh etc usr
