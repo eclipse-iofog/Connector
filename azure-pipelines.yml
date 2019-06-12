@@ -104,9 +104,9 @@ jobs:
         displayName: 'api tests'
 
       - script: |
-          cp client/target/iofog-connector-daemon-jar-with-dependencies.jar iofog-connector-packaging/usr/bin/iofog-connector.jar
+          cp client/target/iofog-connector-client-jar-with-dependencies.jar iofog-connector-packaging/usr/bin/iofog-connector.jar
           cp daemon/target/iofog-connector-daemon-jar-with-dependencies.jar iofog-connector-packaging/usr/bin/iofog-connectord.jar
-          cp client/target/iofog-connector-daemon-jar-with-dependencies.jar iofog-connector-packaging-rpm/usr/bin/iofog-connector.jar
+          cp client/target/iofog-connector-client-jar-with-dependencies.jar iofog-connector-packaging-rpm/usr/bin/iofog-connector.jar
           cp daemon/target/iofog-connector-daemon-jar-with-dependencies.jar iofog-connector-packaging-rpm/usr/bin/iofog-connectord.jar
         displayName: 'copy jars for packaging'
 
