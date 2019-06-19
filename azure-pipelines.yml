@@ -144,6 +144,7 @@ jobs:
           package=$(ls | grep *.deb)
           echo $package
           echo "##vso[task.setvariable variable=pkg_version]$version"
+          echo "##vso[task.setvariable variable=pkg_name]$name"
         displayName: 'create deb package'
 
       - script: |
@@ -169,8 +170,9 @@ jobs:
 
       - script: |
           cd iofog-connector-packaging-rpm
+          echo $(pkg_name)
           echo $(pkg_version)
-          fpm -s dir -t rpm -n iofog-connector -v $(pkg_version) -a all --rpm-os 'linux' --after-install rpm.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade rpm.sh etc usr;
+          fpm -s dir -t rpm -n $(pkg_name) -v $(pkg_version) -a all --rpm-os 'linux' --after-install rpm.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade rpm.sh etc usr;
           echo "pkg maybe created"
           package=$(ls | grep *.rpm)
         displayName: 'create rpm package'
