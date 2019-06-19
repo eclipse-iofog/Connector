@@ -64,7 +64,6 @@ jobs:
 
           if [[ $(Build.SourceBranch) == refs/heads/release* ]]; then
             echo "##vso[task.setvariable variable=primaryTag]rc-$(Build.SourceBranchName)"
-            echo "##vso[task.setvariable variable=primaryTag;isOutput=true]rc-$(Build.SourceBranchName)"
           #If branch starts with ref/tags, apply latest and version tag
           elif [[ $(Build.SourceBranch) == refs/tags* ]]; then
             primaryTag= echo $(primaryTag) | awk '{print substr($1,2);}'
@@ -105,12 +104,12 @@ jobs:
 
       - task: UseRubyVersion@0
         inputs:
-          versionSpec: '= 2.5.5'
+          versionSpec: '>= 2.5.1'
           addToPath: true
         displayName: 'install rubygem to be used to install package_cloud cli'
 
       - script: |
-          gem install --no-ri --no-rdoc fpm
+          gem install --no-document fpm
           fpm -h
           gem install package_cloud
           package_cloud -h
@@ -120,13 +119,19 @@ jobs:
 
       - script: |
           version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)-b$(Build.BuildId)
+          if [[ $(Build.SourceBranch) == refs/heads/release* ]]; then
+            name=rc-iofog-connector
+          else
+            name=iofog-connector
+          fi
           echo $version
           cd iofog-connector-packaging
-          fpm -s dir -t deb -n iofog-connector -v $version -a all --deb-no-default-config-files --after-install debian.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade debian.sh etc usr
+          fpm -s dir -t deb -n $name -v $version -a all --deb-no-default-config-files --after-install debian.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade debian.sh etc usr
           echo "pkg maybe created"
           package=$(ls | grep *.deb)
           echo $package
           echo "##vso[task.setvariable variable=pkg_version]$version"
+          echo "##vso[task.setvariable variable=pkg_name]$name"
         displayName: 'create deb package'
 
       - script: |
@@ -152,8 +157,9 @@ jobs:
 
       - script: |
           cd iofog-connector-packaging-rpm
+          echo $(pkg_name)
           echo $(pkg_version)
-          fpm -s dir -t rpm -n iofog-connector -v $(pkg_version) -a all --rpm-os 'linux' --after-install rpm.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade rpm.sh etc usr;
+          fpm -s dir -t rpm -n $(pkg_name) -v $(pkg_version) -a all --rpm-os 'linux' --after-install rpm.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade rpm.sh etc usr;
           echo "pkg maybe created"
           package=$(ls | grep *.rpm)
         displayName: 'create rpm package'
