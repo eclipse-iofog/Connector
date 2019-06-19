@@ -117,12 +117,12 @@ jobs:
 
       - task: UseRubyVersion@0
         inputs:
-          versionSpec: '= 2.5.5'
+          versionSpec: '>= 2.5.1'
           addToPath: true
         displayName: 'install rubygem to be used to install package_cloud cli'
 
       - script: |
-          gem install --no-ri --no-rdoc fpm
+          gem install --no-document fpm
           fpm -h
           gem install package_cloud
           package_cloud -h
