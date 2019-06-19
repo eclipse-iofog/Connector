@@ -17,6 +17,7 @@ variables:
   group: 'pipelines'
   repository: 'focal-freedom-236620/connector'
   primaryTag: $(Build.SourceBranchName)
+  releaseCandidate: 'rc1'
 
 jobs:
   - job: Connector
@@ -101,20 +102,18 @@ jobs:
         displayName: 'install package_cloud cli and fpm'
 
       - script: |
-          version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)-b$(Build.BuildId)
           if [[ $(Build.SourceBranch) == refs/heads/release* ]]; then
-            name=rc-iofog-connector
+            version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)-$(releaseCandidate)-b$(Build.BuildId)
           else
-            name=iofog-connector
+            version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)-b$(Build.BuildId)
           fi
           echo $version
           cd iofog-connector-packaging
-          fpm -s dir -t deb -n $name -v $version -a all --deb-no-default-config-files --after-install debian.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade debian.sh etc usr
+          fpm -s dir -t deb -n iofog-connector -v $version -a all --deb-no-default-config-files --after-install debian.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade debian.sh etc usr
           echo "pkg maybe created"
           package=$(ls | grep *.deb)
           echo $package
           echo "##vso[task.setvariable variable=pkg_version]$version"
-          echo "##vso[task.setvariable variable=pkg_name]$name"
         displayName: 'create deb package'
 
       - script: |
@@ -140,9 +139,8 @@ jobs:
 
       - script: |
           cd iofog-connector-packaging-rpm
-          echo $(pkg_name)
           echo $(pkg_version)
-          fpm -s dir -t rpm -n $(pkg_name) -v $(pkg_version) -a all --rpm-os 'linux' --after-install rpm.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade rpm.sh etc usr;
+          fpm -s dir -t rpm -n iofog-connector -v $(pkg_version) -a all --rpm-os 'linux' --after-install rpm.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade rpm.sh etc usr;
           echo "pkg maybe created"
           package=$(ls | grep *.rpm)
         displayName: 'create rpm package'
