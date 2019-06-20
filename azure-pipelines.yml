@@ -36,6 +36,19 @@ jobs:
           testResultsFiles: '**/surefire-reports/TEST-*.xml'
           goals: 'package'
 
+      # We need nodejs for Snyk
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '8.x'
+        displayName: 'Install Node.js'
+
+      - script: |
+          npm i -g snyk
+          snyk monitor --project-name=ConnectorCI
+        env:
+          SNYK_TOKEN: $(snykToken)
+        displayName: 'Snyk monitor'
+
       - script: |
           echo " test"
         displayName: 'tests'
