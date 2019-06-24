@@ -19,6 +19,7 @@ import org.eclipse.iofog.connector.config.ConfigManager;
 import org.eclipse.iofog.connector.exceptions.NotFoundException;
 import org.eclipse.iofog.connector.utils.LogUtil;
 import org.eclipse.iofog.connector.utils.SocketsManager;
+import org.glassfish.jersey.internal.util.ExceptionUtils;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -53,19 +54,21 @@ public class RemoveMappingHandler implements Callable<Object> {
 			outputBuffer.writeBytes(errorMessage.getBytes());
 			return new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.BAD_REQUEST, outputBuffer);
 		}
-		
-		String requestBody = new String(content, StandardCharsets.UTF_8);
-		
-		QueryStringDecoder decoder = new QueryStringDecoder(requestBody, false);
-		String mappingId = decoder.parameters().get("mappingid").get(0);
 
 		JsonObject responseJson = null;
+		HttpResponseStatus responseStatus = HttpResponseStatus.OK;
 		try {
+			String requestBody = new String(content, StandardCharsets.UTF_8);
+
+			QueryStringDecoder decoder = new QueryStringDecoder(requestBody, false);
+			String mappingId = decoder.parameters().get("mappingid").get(0);
+
 			LogUtil.info(">>>>>> REMOVE : " + mappingId);
 			ConfigManager.removeMapping(mappingId);
-			
+
 			SocketsManager socketsManager = new SocketsManager();
 			socketsManager.closePort(mappingId);
+
 			responseJson = Json.createObjectBuilder()
 					.add("status", "ok")
 					.add("id", mappingId)
@@ -78,7 +81,9 @@ public class RemoveMappingHandler implements Callable<Object> {
 					.add("errormessage", e.getMessage())
 					.add("timestamp", System.currentTimeMillis())
 					.build();
-			LogUtil.warning("Mapping does not exist : " + e.getMessage());
+			responseStatus = HttpResponseStatus.INTERNAL_SERVER_ERROR;
+			LogUtil.error("Mapping does not exist : " + e.getMessage());
+			LogUtil.error(ExceptionUtils.exceptionStackTraceAsString(e));
 		} catch (IOException e) {
 			responseJson = Json.createObjectBuilder()
 					.add("status", "failed")
@@ -86,19 +91,23 @@ public class RemoveMappingHandler implements Callable<Object> {
 					.add("errormessage", e.getMessage())
 					.add("timestamp", System.currentTimeMillis())
 					.build();
-			LogUtil.warning("Error saving mapping : " + e.getMessage());
+			responseStatus = HttpResponseStatus.INTERNAL_SERVER_ERROR;
+			LogUtil.error("Error deleting mapping : " + e.getMessage());
+			LogUtil.error(ExceptionUtils.exceptionStackTraceAsString(e));
 		} catch (Exception e) {
 			responseJson = Json.createObjectBuilder()
 					.add("status", "failed")
 					.add("errormessage", e.getMessage())
 					.add("timestamp", System.currentTimeMillis())
 					.build();
-			LogUtil.warning(e.getMessage());
+			responseStatus = HttpResponseStatus.INTERNAL_SERVER_ERROR;
+			LogUtil.error("Error deleting mapping : " + e.getMessage());
+			LogUtil.error(ExceptionUtils.exceptionStackTraceAsString(e));
 		}
 		
 		String responseString = responseJson.toString();
 		outputBuffer.writeBytes(responseString.getBytes());
-		FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, outputBuffer);
+		FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, responseStatus, outputBuffer);
 		HttpHeaders.setContentLength(response, outputBuffer.readableBytes());
 	    response.headers().set(HttpHeaders.Names.CONTENT_TYPE, "application/json");
 		return response; 

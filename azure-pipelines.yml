@@ -1,0 +1,193 @@
+trigger:
+  tags:
+    include:
+      - v.*
+  branches:
+    include:
+      - develop
+      - release/*
+  paths:
+    exclude:
+      - README.md
+
+pr:
+  - master
+
+variables:
+  group: 'pipelines'
+  repository: 'focal-freedom-236620/connector'
+  primaryTag: $(Build.SourceBranchName)
+  releaseCandidate: 'rc1'
+
+jobs:
+  - job: Connector
+    pool:
+      vmImage: 'Ubuntu-16.04'
+
+    steps:
+      - task: Maven@3
+        inputs:
+          mavenPomFile: 'pom.xml'
+          mavenOptions: '-Xmx3072m'
+          javaHomeOption: 'JDKVersion'
+          jdkVersionOption: '1.8'
+          jdkArchitectureOption: 'x64'
+          publishJUnitResults: false
+          testResultsFiles: '**/surefire-reports/TEST-*.xml'
+          goals: 'package'
+
+      # We need nodejs for Snyk
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '8.x'
+        displayName: 'Install Node.js'
+
+      - script: |
+          npm i -g snyk
+          snyk monitor --project-name=ConnectorCI
+        env:
+          SNYK_TOKEN: $(snykToken)
+        displayName: 'Snyk monitor'
+
+      - script: |
+          echo " test"
+        displayName: 'tests'
+
+      - script: |
+          echo 'setting secondary tag'
+          echo "##vso[task.setvariable variable=secondaryTag]b-$(Build.BuildId)"
+
+          if [[ $(Build.SourceBranch) == refs/heads/release* ]]; then
+            echo "##vso[task.setvariable variable=primaryTag]rc-$(Build.SourceBranchName)"
+          #If branch starts with ref/tags, apply latest and version tag
+          elif [[ $(Build.SourceBranch) == refs/tags* ]]; then
+            primaryTag= echo $(primaryTag) | awk '{print substr($1,2);}'
+            echo $primaryTag
+            echo "##vso[task.setvariable variable=primaryTag]$primaryTag"
+            echo "##vso[task.setvariable variable=secondaryTag]latest"
+          fi
+        displayName: 'configure tagging variables'
+        name: setvarStep
+
+      - task: Docker@2
+        displayName: 'build and push docker'
+        inputs:
+          containerRegistry: 'Edgeworx GCP'
+          repository: $(repository)
+          command: 'buildAndPush'
+          Dockerfile: 'Dockerfile'
+          tags: |
+            $(secondaryTag)
+            $(primaryTag)
+
+      - script: |
+          echo "mvn test"
+        displayName: 'api tests'
+
+      - script: |
+          cp client/target/iofog-connector-client-jar-with-dependencies.jar iofog-connector-packaging/usr/bin/iofog-connector.jar
+          cp daemon/target/iofog-connector-daemon-jar-with-dependencies.jar iofog-connector-packaging/usr/bin/iofog-connectord.jar
+          cp client/target/iofog-connector-client-jar-with-dependencies.jar iofog-connector-packaging-rpm/usr/bin/iofog-connector.jar
+          cp daemon/target/iofog-connector-daemon-jar-with-dependencies.jar iofog-connector-packaging-rpm/usr/bin/iofog-connectord.jar
+        displayName: 'copy jars for packaging'
+
+      - task: DownloadSecureFile@1
+        inputs:
+          secureFile: 'package_cloud'
+        displayName: 'download package cloud token file'
+
+      - task: UseRubyVersion@0
+        inputs:
+          versionSpec: '>= 2.5.1'
+          addToPath: true
+        displayName: 'install rubygem to be used to install package_cloud cli'
+
+      - script: |
+          gem install --no-document fpm
+          fpm -h
+          gem install package_cloud
+          package_cloud -h
+          echo "config file..."
+          echo $DOWNLOADSECUREFILE_SECUREFILEPATH
+        displayName: 'install package_cloud cli and fpm'
+
+      - script: |
+          if [[ $(Build.SourceBranch) == refs/heads/release* ]]; then
+            version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)-$(releaseCandidate)-b$(Build.BuildId)
+          else
+            version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)-b$(Build.BuildId)
+          fi
+          echo $version
+          cd iofog-connector-packaging
+          fpm -s dir -t deb -n iofog-connector -v $version -a all --deb-no-default-config-files --after-install debian.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade debian.sh etc usr
+          echo "pkg maybe created"
+          package=$(ls | grep *.deb)
+          echo $package
+          echo "##vso[task.setvariable variable=pkg_version]$version"
+        displayName: 'create deb package'
+
+      - script: |
+          cd iofog-connector-packaging
+          package=$(ls | grep *.deb)
+          echo "package..."
+          echo $package
+
+          declare -a UBUNTU_VERS=("precise" "trusty" "utopic" "vivid" "wily" "xenial" "bionic") #Support ubuntu versions
+          declare -a DEBIAN_VERS=("wheezy" "jessie" "stretch" "buster") #Also appplies to Raspbian, See related for loop
+
+          for version in "${UBUNTU_VERS[@]}"
+          do
+              package_cloud push iofog/iofog-connector-snapshots/ubuntu/${version} $package --config=$DOWNLOADSECUREFILE_SECUREFILEPATH
+          done
+
+          for version in "${DEBIAN_VERS[@]}"
+          do
+              package_cloud push iofog/iofog-connector-snapshots/debian/${version} $package --config=$DOWNLOADSECUREFILE_SECUREFILEPATH
+              package_cloud push iofog/iofog-connector-snapshots/raspbian/${version} $package --config=$DOWNLOADSECUREFILE_SECUREFILEPATH
+          done
+        displayName: 'publish deb to package-cloud'
+
+      - script: |
+          cd iofog-connector-packaging-rpm
+          echo $(pkg_version)
+          fpm -s dir -t rpm -n iofog-connector -v $(pkg_version) -a all --rpm-os 'linux' --after-install rpm.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade rpm.sh etc usr;
+          echo "pkg maybe created"
+          package=$(ls | grep *.rpm)
+        displayName: 'create rpm package'
+
+      - script: |
+          cd iofog-connector-packaging-rpm
+          package=$(ls | grep *.rpm)
+          echo "package..."
+          echo $package
+
+          declare -a FEDORA_VERS=("22" "23" "24") #Supported Fedora Versions
+          declare -a REDHAT_VERS=("6" "7") #Supported Redhat versions
+
+          for version in ${FEDORA_VERS[@]}
+          do
+              package_cloud push iofog/iofog-connector-snapshots/fedora/${version} $package --config=$DOWNLOADSECUREFILE_SECUREFILEPATH
+          done
+
+          for version in ${REDHAT_VERS[@]}
+          do
+              package_cloud push iofog/iofog-connector-snapshots/el/${version} $package --config=$DOWNLOADSECUREFILE_SECUREFILEPATH
+          done
+        displayName: 'publish rpm to package-cloud'
+
+      - task: CopyFiles@2
+        inputs:
+          SourceFolder: $(System.DefaultWorkingDirectory)
+          TargetFolder: $(Build.ArtifactStagingDirectory)
+          Contents: |
+            daemon/target/iofog-connector-daemon-jar-with-dependencies.jar
+            client/target/iofog-connector-client-jar-with-dependencies.jar
+            iofog-connector-packaging/**/*
+            iofog-connector-packaging-rpm/**/*
+            Dockerfile
+          OverWrite: true
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          ArtifactName: 'connector'

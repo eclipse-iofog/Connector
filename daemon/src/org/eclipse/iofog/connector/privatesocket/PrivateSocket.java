@@ -74,9 +74,12 @@ public class PrivateSocket implements Runnable {
 			try {
 				channel.close().sync();
 				Settings.setPortAvailable(port);
-				for (Channel ch: connections) {
+
+				while (connections.size() > 0) {
+					Channel ch = connections.get(0);
 					ch.close().sync();
 				}
+
 				if (pairSocket != null) {
 					pairSocket.pairSocket = null;
 					pairSocket.close();
