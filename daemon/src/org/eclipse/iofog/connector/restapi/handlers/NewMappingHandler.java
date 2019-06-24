@@ -21,6 +21,7 @@ import org.eclipse.iofog.connector.exceptions.DuplicateIdException;
 import org.eclipse.iofog.connector.utils.LogUtil;
 import org.eclipse.iofog.connector.utils.Settings;
 import org.eclipse.iofog.connector.utils.SocketsManager;
+import org.glassfish.jersey.internal.util.ExceptionUtils;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -35,7 +36,7 @@ public class NewMappingHandler implements Callable<Object> {
 	private final HttpRequest request;
 	private ByteBuf outputBuffer;
 	private final byte[] content;
-	
+
 	public NewMappingHandler(HttpRequest request, ByteBuf outputBuffer, byte[] content) {
 		this.request = request;
 		this.outputBuffer = outputBuffer;
@@ -64,6 +65,7 @@ public class NewMappingHandler implements Callable<Object> {
 		String mapping = decoder.parameters().get("mapping").get(0);
 		
 		JsonObject responseJson = null;
+		HttpResponseStatus responseStatus = HttpResponseStatus.OK;
 		try {
 			JsonObject mappingJson = Json.createReader(new StringReader(mapping)).readObject();
 			String mappingType = mappingJson.getString("type");
@@ -126,7 +128,9 @@ public class NewMappingHandler implements Callable<Object> {
 					.add("errormessage", e.getMessage())
 					.add("timestamp", System.currentTimeMillis())
 					.build();
-			LogUtil.warning("Duplicate mapping id : " + e.getMessage());
+			responseStatus = HttpResponseStatus.CONFLICT;
+			LogUtil.error("Duplicate mapping id : " + e.getMessage());
+			LogUtil.error(ExceptionUtils.exceptionStackTraceAsString(e));
 		} catch (IOException e) {
 			responseJson = Json.createObjectBuilder()
 					.add("status", "failed")
@@ -134,19 +138,23 @@ public class NewMappingHandler implements Callable<Object> {
 					.add("errormessage", e.getMessage())
 					.add("timestamp", System.currentTimeMillis())
 					.build();
-			LogUtil.warning("Error saving mapping : " + e.getMessage());
+			responseStatus = HttpResponseStatus.INTERNAL_SERVER_ERROR;
+			LogUtil.error("Error saving mapping : " + e.getMessage());
+			LogUtil.error(ExceptionUtils.exceptionStackTraceAsString(e));
 		} catch (Exception e) {
 			responseJson = Json.createObjectBuilder()
 					.add("status", "failed")
 					.add("errormessage", e.getMessage())
 					.add("timestamp", System.currentTimeMillis())
 					.build();
-			LogUtil.warning("Error parsing mapping : " + e.getMessage());
+			responseStatus = HttpResponseStatus.INTERNAL_SERVER_ERROR;
+			LogUtil.error("Error parsing mapping : " + e.getMessage());
+			LogUtil.error(ExceptionUtils.exceptionStackTraceAsString(e));
 		}
 		
 		String responseString = responseJson.toString();
 		outputBuffer.writeBytes(responseString.getBytes());
-		FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, outputBuffer);
+		FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, responseStatus, outputBuffer);
 		HttpHeaders.setContentLength(response, outputBuffer.readableBytes());
 	    response.headers().set(HttpHeaders.Names.CONTENT_TYPE, "application/json");
 		return response; 
