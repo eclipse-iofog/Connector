@@ -1,4 +1,4 @@
-FROM openjdk:7
+FROM openjdk:8
 
 COPY iofog-connector-packaging/etc /etc
 COPY iofog-connector-packaging/usr /usr
