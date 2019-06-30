@@ -10,9 +10,6 @@ trigger:
     exclude:
       - README.md
 
-pr:
-  - master
-
 variables:
   group: 'pipelines'
   repository: 'focal-freedom-236620/connector'
@@ -112,18 +109,22 @@ jobs:
         displayName: 'install package_cloud cli and fpm'
 
       - script: |
-          if [[ $(Build.SourceBranch) == refs/heads/release* ]]; then
-            version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)-$(releaseCandidate)-b$(Build.BuildId)
+          version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          if [[ $(Build.SourceBranch) == refs/tags* ]]; then
+            pkg_version=$version
+          elif [[ $(Build.SourceBranch) == refs/heads/release* ]]; then
+            pkg_version=$version-$(releaseCandidate)-b$(Build.BuildId)
           else
-            version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)-b$(Build.BuildId)
+            pkg_version=$version-b$(Build.BuildId)
           fi
-          echo $version
+          echo $pkg_version
+
           cd iofog-connector-packaging
-          fpm -s dir -t deb -n iofog-connector -v $version -a all --deb-no-default-config-files --after-install debian.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade debian.sh etc usr
+          fpm -s dir -t deb -n iofog-connector -v $pkg_version -a all --deb-no-default-config-files --after-install debian.sh --after-remove remove.sh --before-upgrade upgrade.sh --after-upgrade debian.sh etc usr
           echo "pkg maybe created"
           package=$(ls | grep *.deb)
           echo $package
-          echo "##vso[task.setvariable variable=pkg_version]$version"
+          echo "##vso[task.setvariable variable=pkg_version]$pkg_version"
         displayName: 'create deb package'
 
       - script: |
@@ -182,10 +183,11 @@ jobs:
           Contents: |
             daemon/target/iofog-connector-daemon-jar-with-dependencies.jar
             client/target/iofog-connector-client-jar-with-dependencies.jar
-            iofog-connector-packaging/**/*
-            iofog-connector-packaging-rpm/**/*
+            iofog-connector-packaging/**/*.deb
+            iofog-connector-packaging-rpm/**/*.rpm
             Dockerfile
           OverWrite: true
+        displayName: 'copy artifacts to staging directory'
 
       - task: PublishBuildArtifacts@1
         inputs:
