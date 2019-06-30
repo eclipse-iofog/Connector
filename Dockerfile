@@ -1,4 +1,4 @@
-FROM iofog/java-ubuntu-x86:8u211
+FROM openjdk:7
 
 COPY iofog-connector-packaging/etc /etc
 COPY iofog-connector-packaging/usr /usr
