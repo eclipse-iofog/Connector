@@ -183,8 +183,7 @@ jobs:
           Contents: |
             daemon/target/iofog-connector-daemon-jar-with-dependencies.jar
             client/target/iofog-connector-client-jar-with-dependencies.jar
-            iofog-connector-packaging/**/*.deb
-            iofog-connector-packaging-rpm/**/*.rpm
+            iofog-connector-packaging/**/*
             Dockerfile
           OverWrite: true
         displayName: 'copy artifacts to staging directory'
