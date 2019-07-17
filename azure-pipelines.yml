@@ -13,7 +13,7 @@ trigger:
 variables:
   group: 'pipelines'
   repository: 'focal-freedom-236620/connector'
-  buildTag: b$(Build.BuildId)
+  buildTag: $(Build.BuildId)
   branchTag: $(Build.SourceBranchName)
   releaseCandidate: 'rc'
 
@@ -78,7 +78,7 @@ jobs:
           command: 'buildAndPush'
           Dockerfile: 'Dockerfile'
           tags: |
-            $(buildTag)
+            b-$(buildTag)
             $(primaryTag)
             latest
 
@@ -116,9 +116,9 @@ jobs:
           if [[ $(Build.SourceBranch) == refs/tags* ]]; then
             pkg_version=$version
           elif [[ $(Build.SourceBranch) == refs/heads/release* ]]; then
-            pkg_version=$version-$(releaseCandidate)-$(buildTag)
+            pkg_version=$version-$(releaseCandidate)-b$(buildTag)
           else
-            pkg_version=$version-$(buildTag)
+            pkg_version=$version-b$(buildTag)
           fi
           echo $pkg_version
 
