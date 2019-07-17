@@ -1,7 +1,7 @@
 FROM iofog/java-ubuntu-x86:8u211
 
-COPY iofog-connector-packaging/etc /etc
-COPY iofog-connector-packaging/usr /usr
+COPY packaging /etc
+COPY packaging /usr
 COPY daemon/target/iofog-connector-daemon-jar-with-dependencies.jar /usr/bin/iofog-connectord.jar
 COPY client/target/iofog-connector-client-jar-with-dependencies.jar /usr/bin/iofog-connector.jar
 
