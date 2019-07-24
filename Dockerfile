@@ -9,8 +9,8 @@ RUN apt-get update && \
     apt-get install -y sudo && \
     useradd -r -U -s /usr/bin/nologin iofog-connector && \
     usermod -aG root,sudo iofog-connector && \
-    mv /etc/iofog-connector/configs_new.json /etc/iofog-connector/configs.json && \
-    mv /etc/iofog-connector/iofog-connector_new.conf /etc/iofog-connector/iofog-connector.conf && \
+    mv /etc/iofog-connector/configs.json /etc/iofog-connector/configs.json && \
+    mv /etc/iofog-connector/iofog-connector.conf /etc/iofog-connector/iofog-connector.conf && \
     mkdir -p /var/log/iofog-connector && \
     chown -R :iofog-connector /etc/iofog-connector && \
     chown -R :iofog-connector /var/log/iofog-connector && \
