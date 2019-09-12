@@ -180,4 +180,8 @@ public class Settings {
 	public static boolean isDevMode(){
 		return devMode;
 	}
+
+	public static long getNumberOfAvailablePorts() {
+		return validPorts.values().stream().filter(v -> v.booleanValue()).count();
+	}
 }

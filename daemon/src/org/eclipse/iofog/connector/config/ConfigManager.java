@@ -13,7 +13,7 @@
 
 package org.eclipse.iofog.connector.config;
 
-import org.eclipse.iofog.connector.exceptions.DuplicateIdException;
+import org.eclipse.iofog.connector.exceptions.*;
 import org.eclipse.iofog.connector.utils.Constants;
 import org.eclipse.iofog.connector.utils.LogUtil;
 
@@ -22,7 +22,6 @@ import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.ws.rs.NotFoundException;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

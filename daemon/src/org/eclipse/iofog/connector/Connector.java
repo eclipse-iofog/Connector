@@ -15,7 +15,7 @@ package org.eclipse.iofog.connector;
 
 import org.eclipse.iofog.connector.config.ConfigManager;
 import org.eclipse.iofog.connector.config.Configuration;
-import org.eclipse.iofog.connector.restapi.RestAPI;
+import org.eclipse.iofog.connector.restapi.RestAPIServer;
 import org.eclipse.iofog.connector.utils.*;
 
 import javax.json.Json;
@@ -65,7 +65,7 @@ public class Connector {
 
 		ConfigManager.loadConfiguration();
 
-		RestAPI server = RestAPI.getInstance();
+		RestAPIServer server = RestAPIServer.getInstance();
 		server.start();
 
 		SocketsManager socketsManager = new SocketsManager();
