@@ -33,21 +33,17 @@ public class RestAPIServer {
     public void start() {
         server = Javalin
                 .create()
-                .post("/api/v2/mapping/add", new NewMappingHandler())
-                .post("/api/v2/mapping/remove", new RemoveMappingHandler())
-                .post("/api/v2/status", new StatusHandler())
-                .post("/api/v2/commandline", new CommandLineHandler())
-                .post("/api/v2/direct", new DirectConnectionRequestHandler())
-                .post("/api/v2/direct/add", new NewDirectConnectionHandler())
-                .post("/api/v2/direct/remove", new RemoveDirectConnectionHandler())
+                .post(Constants.API_PORT_ADD, new NewMappingHandler())
+                .post(Constants.API_PORT_REMOVE, new RemoveMappingHandler())
+                .post(Constants.API_STATUS, new StatusHandler())
+                .post(Constants.API_COMMAND_LINE, new CommandLineHandler())
+                .post(Constants.API_DIRECT_REQUEST, new DirectConnectionRequestHandler())
+                .post(Constants.API_DIRECT_ADD, new NewDirectConnectionHandler())
+                .post(Constants.API_DIRECT_REMOVE, new RemoveDirectConnectionHandler())
                 .start(port);
     }
 
     public void stop() {
         server.stop();
-    }
-
-    public boolean isOpen() {
-        return server.server().getStarted();
     }
 }
