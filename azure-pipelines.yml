@@ -13,6 +13,8 @@ trigger:
 variables:
   group: 'pipelines'
   repository: 'focal-freedom-236620/connector'
+  imageTag:
+  ref: $(Build.SourceBranch)
   buildTag: $(Build.BuildId)
   branchTag: $(Build.SourceBranchName)
   releaseCandidate: 'rc'
@@ -69,17 +71,16 @@ jobs:
         displayName: 'tests'
 
       - script: |
-          echo 'setting primary tag'
-          echo "##vso[task.setvariable variable=primaryTag]$(branchTag)"
-
-          if [[ $(Build.SourceBranch) == refs/heads/release* ]]; then
-            echo "##vso[task.setvariable variable=primaryTag]rc-$(branchTag)"
-          #If branch starts with ref/tags, apply latest and version tag
-          elif [[ $(Build.SourceBranch) == refs/tags* ]]; then
-            primaryTag= echo $(branchTag) | awk '{print substr($1,2);}'
-            echo $primaryTag
-            echo "##vso[task.setvariable variable=primaryTag]$primaryTag"
+          if [[ $(ref) == refs/tags* ]]; then
+            TAG=$(echo $(ref) | sed "s|refs/tags/v||g")
+            echo "##vso[task.setvariable variable=imageTag]$TAG"
+          else
+            LATESTTAG=$(git tag | tail -1)
+            LATESTVERS=${LATESTTAG#?}
+            if [ -z "$LATESTVERS" ]; then LATESTVERS=0.0.0; fi
+            echo "##vso[task.setvariable variable=imageTag]$LATESTVERS-b$(build)"
           fi
+          echo $(imageTag)
         displayName: 'configure tagging variables'
         name: setvarStep
 
@@ -95,8 +96,7 @@ jobs:
           command: 'buildAndPush'
           Dockerfile: 'Dockerfile'
           tags: |
-            b-$(buildTag)
-            $(primaryTag)
+            $(imageTag)
             latest
 
       - script: |
@@ -130,10 +130,8 @@ jobs:
 
       - script: |
           version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          if [[ $(Build.SourceBranch) == refs/tags* ]]; then
+          if [[ $(ref) == refs/tags* ]]; then
             pkg_version=$version
-          elif [[ $(Build.SourceBranch) == refs/heads/release* ]]; then
-            pkg_version=$version-$(releaseCandidate)-b$(buildTag)
           else
             pkg_version=$version-b$(buildTag)
           fi
