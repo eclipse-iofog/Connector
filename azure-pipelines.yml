@@ -78,7 +78,7 @@ jobs:
             LATESTTAG=$(git tag | tail -1)
             LATESTVERS=${LATESTTAG#?}
             if [ -z "$LATESTVERS" ]; then LATESTVERS=0.0.0; fi
-            echo "##vso[task.setvariable variable=imageTag]$LATESTVERS-b$(build)"
+            echo "##vso[task.setvariable variable=imageTag]$LATESTVERS-b$(buildTag)"
           fi
           echo $(imageTag)
         displayName: 'configure tagging variables'
