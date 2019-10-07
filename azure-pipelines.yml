@@ -97,7 +97,10 @@ jobs:
           Dockerfile: 'Dockerfile'
           tags: |
             $(imageTag)
+            $(branchTag)
             latest
+        condition: or(and(succeeded(), startsWith(variables['build.sourceBranch'], 'refs/heads/release/')), and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/develop')), and(succeeded(), startsWith(variables['build.sourceBranch'], 'refs/tags/')))
+
 
       - script: |
           echo "mvn test"
