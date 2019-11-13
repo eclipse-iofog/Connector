@@ -4,14 +4,14 @@ useradd -r -U -s /usr/bin/nologin iofog-connector
 usermod -aG admin,sudo iofog-connector
 echo "Added iofog-connector user and group"
 
-if [ -f /etc/iofog-connector/configs.json ];
+if [ -f /etc/iofog-connector/configs.json] && [ -f /etc/iofog-connector/configs_new.json ];
 then
    rm /etc/iofog-connector/configs_new.json
 else
   mv /etc/iofog-connector/configs_new.json /etc/iofog-connector/configs.json
 fi
 
-if [ -f /etc/iofog-connector/iofog-connector.conf ];
+if [ -f /etc/iofog-connector/iofog-connector.conf ] && [ -f /etc/iofog-connector/iofog-connector_new.conf ];
 then
    rm /etc/iofog-connector/iofog-connector_new.conf
 else
