@@ -159,12 +159,16 @@ jobs:
 
           for version in "${UBUNTU_VERS[@]}"
           do
+              package_cloud yank iofog/iofog-connector-snapshots/ubuntu/${version} $package --config=$(Agent.TempDirectory)/package_cloud || true
               package_cloud push iofog/iofog-connector-snapshots/ubuntu/${version} $package --config=$(Agent.TempDirectory)/package_cloud
           done
 
           for version in "${DEBIAN_VERS[@]}"
           do
+              package_cloud yank iofog/iofog-connector-snapshots/debian/${version} $package --config=$(Agent.TempDirectory)/package_cloud || true
               package_cloud push iofog/iofog-connector-snapshots/debian/${version} $package --config=$(Agent.TempDirectory)/package_cloud
+
+              package_cloud yank iofog/iofog-connector-snapshots/raspbian/${version} $package --config=$(Agent.TempDirectory)/package_cloud || true
               package_cloud push iofog/iofog-connector-snapshots/raspbian/${version} $package --config=$(Agent.TempDirectory)/package_cloud
           done
         displayName: 'publish deb to package-cloud'
@@ -188,11 +192,13 @@ jobs:
 
           for version in ${FEDORA_VERS[@]}
           do
+              package_cloud yank iofog/iofog-connector-snapshots/fedora/${version} $package --config=$(Agent.TempDirectory)/package_cloud || true
               package_cloud push iofog/iofog-connector-snapshots/fedora/${version} $package --config=$(Agent.TempDirectory)/package_cloud
           done
 
           for version in ${REDHAT_VERS[@]}
           do
+              package_cloud yank iofog/iofog-connector-snapshots/el/${version} $package --config=$(Agent.TempDirectory)/package_cloud || true
               package_cloud push iofog/iofog-connector-snapshots/el/${version} $package --config=$(Agent.TempDirectory)/package_cloud
           done
         displayName: 'publish rpm to package-cloud'
