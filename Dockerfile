@@ -1,7 +1,7 @@
 FROM iofog/java-ubuntu-x86:8u211
 
-COPY iofog-connector-packaging/etc /etc
-COPY iofog-connector-packaging/usr /usr
+COPY packaging/etc /etc
+COPY packaging/usr /usr
 COPY daemon/target/iofog-connector-daemon-jar-with-dependencies.jar /usr/bin/iofog-connectord.jar
 COPY client/target/iofog-connector-client-jar-with-dependencies.jar /usr/bin/iofog-connector.jar
 
@@ -9,8 +9,6 @@ RUN apt-get update && \
     apt-get install -y sudo && \
     useradd -r -U -s /usr/bin/nologin iofog-connector && \
     usermod -aG root,sudo iofog-connector && \
-    mv /etc/iofog-connector/configs_new.json /etc/iofog-connector/configs.json && \
-    mv /etc/iofog-connector/iofog-connector_new.conf /etc/iofog-connector/iofog-connector.conf && \
     mkdir -p /var/log/iofog-connector && \
     chown -R :iofog-connector /etc/iofog-connector && \
     chown -R :iofog-connector /var/log/iofog-connector && \

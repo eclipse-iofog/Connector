@@ -34,7 +34,7 @@ chmod 774 /etc/init.d/iofog-connector
 
 chmod 754 /usr/bin/iofog-connector
 
-chown :connector /usr/bin/iofog-connector
+chown :iofog-connector /usr/bin/iofog-connector
 
 chkconfig --add iofog-connector
 chkconfig iofog-connector on
