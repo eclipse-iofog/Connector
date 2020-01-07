@@ -1,6 +1,7 @@
 package org.eclipse.iofog.connector.restapi;
 
 import io.javalin.http.*;
+import io.netty.util.internal.StringUtil;
 import org.eclipse.iofog.connector.config.ConfigManager;
 import org.eclipse.iofog.connector.config.Configuration;
 import org.eclipse.iofog.connector.exceptions.DuplicateIdException;
@@ -23,6 +24,9 @@ public class NewMappingHandler implements Handler {
     @Override
     public void handle(@NotNull Context context) throws Exception {
         String mapping = context.formParam("mapping");
+        if (StringUtil.isNullOrEmpty(mapping)) {
+            throw new BadRequestResponse("Mapping must not be null or empty");
+        }
 
         try {
             JsonObject mappingJson = Json.createReader(new StringReader(mapping)).readObject();

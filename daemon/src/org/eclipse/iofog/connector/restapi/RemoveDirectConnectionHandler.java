@@ -1,10 +1,8 @@
 package org.eclipse.iofog.connector.restapi;
 
-import io.javalin.http.Context;
-import io.javalin.http.Handler;
-import io.javalin.http.InternalServerErrorResponse;
-import io.javalin.http.NotFoundResponse;
+import io.javalin.http.*;
 import io.javalin.plugin.openapi.annotations.ContentType;
+import io.netty.util.internal.StringUtil;
 import org.eclipse.iofog.connector.config.ConfigManager;
 import org.eclipse.iofog.connector.exceptions.NotFoundException;
 import org.eclipse.iofog.connector.utils.LogUtil;
@@ -20,6 +18,9 @@ public class RemoveDirectConnectionHandler implements Handler {
     public void handle(@NotNull Context context) throws Exception {
         try {
             String mappingId = context.formParam("mappingid");
+            if (StringUtil.isNullOrEmpty(mappingId)) {
+                throw new BadRequestResponse("Mapping id must not be null or empty");
+            }
 
             LogUtil.info(">>>>>> REMOVE : " + mappingId);
             ConfigManager.removeMapping(mappingId);
