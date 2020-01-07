@@ -1,6 +1,7 @@
 package org.eclipse.iofog.connector.restapi;
 
 import io.javalin.http.*;
+import io.netty.util.internal.StringUtil;
 import org.eclipse.iofog.connector.config.ConfigManager;
 import org.eclipse.iofog.connector.exceptions.NotFoundException;
 import org.eclipse.iofog.connector.restapi.response.RemoveMappingResponse;
@@ -13,6 +14,9 @@ public class RemoveMappingHandler implements Handler {
     @Override
     public void handle(@NotNull Context context) throws Exception {
         String mappingId = context.formParam("mappingid");
+        if (StringUtil.isNullOrEmpty(mappingId)) {
+            throw new BadRequestResponse("Mapping id must not be null or empty");
+        }
 
         try {
             ConfigManager.removeMapping(mappingId);

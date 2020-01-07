@@ -2,6 +2,7 @@ package org.eclipse.iofog.connector.restapi;
 
 import io.javalin.http.*;
 import io.javalin.plugin.openapi.annotations.ContentType;
+import io.netty.util.internal.StringUtil;
 import org.eclipse.iofog.connector.config.ConfigManager;
 import org.eclipse.iofog.connector.privatesocket.PrivateSocket;
 import org.eclipse.iofog.connector.publicsocket.PublicSocket;
@@ -18,6 +19,9 @@ public class StatusHandler implements Handler {
     @Override
     public void handle(@NotNull Context context) throws Exception {
         String mappingId = context.formParam("mappingid");
+        if (StringUtil.isNullOrEmpty(mappingId)) {
+            throw new BadRequestResponse("Mapping id must not be null or empty");
+        }
 
         try {
             JsonObjectBuilder objectBuilder = Json.createObjectBuilder()
